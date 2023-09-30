@@ -3,8 +3,7 @@ let map;
 let directionsService;
 let directionsDisplay;
 
-const origin_input = document.getElementById('origin');
-const itemsURL = './buildings.json'; // Replace with the path to your JSON file
+const buildingsURL = './buildings.json'; // Replace with the path to your JSON file
 
 async function initMap() {
 
@@ -16,16 +15,12 @@ async function initMap() {
     });
     
     // Initialize the directions service and display
-    directionsService = new google.maps.DirectionsService();
-    directionsDisplay = new google.maps.DirectionsRenderer();
-    directionsDisplay.setMap(map);
+    // directionsService = new google.maps.DirectionsService();
+    // directionsDisplay = new google.maps.DirectionsRenderer();
+    // directionsDisplay.setMap(map);
 
     // Handle button click event
-    document.getElementById('calculateRoute').addEventListener('click', calculateRoute);
-
-//   google.maps.event.addListener(map, "click", (event) => {
-//     addMarker({location: event.latLng});
-//   })
+    document.getElementById('findroute-button').addEventListener('click', calculateRoute);
 
 }
 
@@ -35,67 +30,90 @@ function calculateRoute() {
     const destination = document.getElementById('destination').value;
 
     // Check if both origin and destination are provided
-    if (origin === '' || destination === '') {
-        alert('Please enter both origin and destination.');
-        return;
+    if (origin === '' && destination === '') {
+      alert('입력이 올바른지 확인해주세요.');
+      return;
+    } else if (not(buildingsData.contains(origin))) {
+      alert('출발지가 올바른지 확인해주세요.');
+      return;
+    } else if (not(buildingsData.contains(destination))) {
+      alert('도착지가 올바른지 확인해주세요.');
+      return;
+    } else if (buildingsData.contains(origin) && buildingsData.contains(destination)){
+      print("yes!")
+      //find route algo
+    } else {
+      alert('입력이 올바른지 확인해주세요.');
+      return;
     }
 
-    // Create a directions request
-    const request = {
-        origin: origin,
-        destination: destination,
-        travelMode: 'DRIVING' // You can change the travel mode as needed
-    };
-
-    // Calculate and display the route
-    directionsService.route(request, function (result, status) {
-        if (status === 'OK') {
-            directionsDisplay.setDirections(result);
-        } else {
-            alert('Error calculating route: ' + status);
-        }
-    });
 }
 
-// Fetch and populate the list items from the JSON file
-fetch(itemsURL)
-    .then(response => response.json())
-    .then(items => {
-        items.forEach(itemText => {
-            const listItem = document.createElement('li');
-            listItem.textContent = itemText;
-            list.appendChild(listItem);
+const originInput = document.getElementById('origin');
+const originBuildingsList = document.getElementById('origin-buildings-list');
+const originBuildingsListWrapper = document.getElementById('origin-buildings-list-wrapper');
+
+const destinationInput = document.getElementById('destination');
+const destinationBuildingsList = document.getElementById('destination-buildings-list');
+const destinationBuildingsListWrapper = document.getElementById('destination-buildings-list-wrapper');
+
+const buildings = [] // All buildings
+let buildingsFiltered = []; // Search-filtered buildings
+
+fetch(buildingsURL)
+  .then(response => response.json())
+  .then(buildings => {
+    buildingsData = buildings; // Store the building data
+
+    originInput.addEventListener('originInput', () => {
+      const searchText = originInput.value();
+      const filteredCountries = buildingsData.filter(building => building.toLowerCase().includes(searchText));
+
+      // Clear previous list items
+      buildingsList.innerHTML = '';
+
+      // Populate the list with filtered countries
+      filteredBuildings.forEach(building => {
+        const listItem = document.createElement('li');
+        listItem.textContent = building;
+        listItem.addEventListener('click', () => {
+            originInput.value = building;
+          listWrapper.style.display = 'none';
         });
-    })
-    .catch(error => console.error('Error fetching items:', error));
+        buildingsList.appendChild(listItem);
+      });
 
-// Initialize the map when the page loads
-google.maps.event.addDomListener(window, 'load', initMap);
-
-const list = document.getElementById('buildings_list');
-list.addEventListener('click', function (event) {
-    const target = event.target;
-    if (target.tagName === 'LI') {
-        origin_input.value = target.textContent;
-        list.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
-        target.classList.add('selected');
-        // origin_input.style.color = 'var(--green)';
-    }
-});
-
-$('#refdocs_list ul li').click(function () {
-    $('#refdocs_list ul li').removeClass('selected');
-    $(this).addClass('selected');
-    document.getElementById('refdocs').value = $(this).text()
-});
-
-$('#refdocs').on('keyup', function () {
-    var search = $(this).val();
-    $('#refdocs_list li').each(function () {
-        var val = $(this).text();
-        $(this).toggle( !! val.match(search)).html(
-        val.replace(search, function (match) {
-            return '<mark>' + match + '</mark>'
-        }, 'gi'));
+      // Show or hide the list based on whether there are matching countries
+      if (filteredBuildings.length > 0) {
+        listWrapper.style.display = 'block';
+      } else {
+        listWrapper.style.display = 'none';
+      }
     });
-});
+
+    originInput.addEventListener('focus', () => {
+      if (originInput.value.trim() === '') {
+        // Show the full list when the input is focused and empty
+        buildingsList.innerHTML = '';
+        buildingsData.forEach(building => {
+          const listItem = document.createElement('li');
+          listItem.textContent = building;
+          listItem.addEventListener('click', () => {
+            originInput.value = building;
+            listWrapper.style.display = 'none';
+          });
+          buildingsList.appendChild(listItem);
+        });
+        listWrapper.style.display = 'block';
+      }
+    });
+
+    originInput.addEventListener('blur', () => {
+      // Hide the list when the input loses focus
+      setTimeout(() => {
+        listWrapper.style.display = 'none';
+      }, 200);
+    });
+  })
+  .catch(error => console.error('Error fetching JSON data:', error));
+
