@@ -57,8 +57,6 @@ const destinationInput = document.getElementById("destination");
 const destinationBuildingsListWrapper = document.getElementById("destination-buildings-list-wrapper");
 const destinationBuildingsList = document.getElementById("destination-buildings-list");
 
-const buildings = [] // All buildings
-let buildingsFiltered = []; // Search-filtered buildings
 
 fetch(buildingsURL)
   .then(response => response.json())
@@ -69,10 +67,10 @@ fetch(buildingsURL)
     
     originInput.addEventListener('originInput', () => {
       const searchText = originInput.value();
-      const filteredCountries = buildingsData.filter(building => building.toLowerCase().includes(searchText));
+      const filteredCountries = buildingsData.filter(building => building().includes(searchText));
 
       // Clear previous list items
-      buildingsList.innerHTML = '';
+      originBuildingsList.innerHTML = '';
 
       // Populate the list with filtered countries
       filteredBuildings.forEach(building => {
@@ -80,40 +78,40 @@ fetch(buildingsURL)
         listItem.textContent = building;
         listItem.addEventListener('click', () => {
             originInput.value = building;
-          listWrapper.style.display = 'none';
+            originBuildingsListWrapper.style.display = 'none';
         });
-        buildingsList.appendChild(listItem);
+        originBuildingsList.appendChild(listItem);
       });
 
       // Show or hide the list based on whether there are matching countries
       if (filteredBuildings.length > 0) {
-        listWrapper.style.display = 'block';
+        originBuildingsListWrapper.style.display = 'block';
       } else {
-        listWrapper.style.display = 'none';
+        originBuildingsListWrapper.style.display = 'none';
       }
     });
 
     originInput.addEventListener('focus', () => {
       if (originInput.value.trim() === '') {
         // Show the full list when the input is focused and empty
-        buildingsList.innerHTML = '';
+        originBuildingsList.innerHTML = '';
         buildingsData.forEach(building => {
           const listItem = document.createElement('li');
           listItem.textContent = building;
           listItem.addEventListener('click', () => {
             originInput.value = building;
-            listWrapper.style.display = 'none';
+            originBuildingsListWrapper.style.display = 'none';
           });
-          buildingsList.appendChild(listItem);
+          originBuildingsList.appendChild(listItem);
         });
-        listWrapper.style.display = 'block';
+        originBuildingsListWrapper.style.display = 'block';
       }
     });
 
     originInput.addEventListener('blur', () => {
       // Hide the list when the input loses focus
       setTimeout(() => {
-        listWrapper.style.display = 'none';
+        originBuildingsListWrapper.style.display = 'none';
       }, 200);
     });
   })
