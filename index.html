@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,35 +14,41 @@
       <img src="glide.png" id="glide-logo">
     </div>
 
-    <div id="inputs-container">
+    <form id="route-form" action="directions.html" method="GET" target="_self" autocomplete="off">
+      <div id="inputs-container">
 
-      <div id="textbox-container">
-        <div id="origin-text-box">
-          <label for="origin"></label>
-          <input type="text" id="origin" placeholder="출발지 입력">
-          <div id="buildings-list-wrapper">
-            <ul id="buildings-list"></ul>
+        <div id="textbox-container">
+          <div id="origin-textbox-container">
+            <input type="text" id="origin" placeholder="출발지 입력">
+            <div class="buildings-list-wrapper" id="origin-buildings-list-wrapper">
+              <ul class="buildings-list" id="origin-buildings-list">
+                
+              </ul>
+            </div>
           </div>
-        </div>
-  
-        <div id="destination-text-box">
-          <label for="destination"></label>
-          <input type="text" id="destination" placeholder="도착지 입력">
-          <div id="buildings-list-wrapper">
-            <ul id="buildings-list"></ul>
-          </div>
-        </div>
-  
-        <div id="swap-button">
-  
-        </div>
-      </div>
-      
-      <div id="button-container">
-        <button id="findroute-button">길찾기</button>
-      </div>
-    </div>
     
+          <div id="destination-textbox-container">
+            <input type="text" id="destination" placeholder="도착지 입력">
+            <div class="buildings-list-wrapper" id="destination-buildings-list-wrapper">
+              <ul class="buildings-list" id="destination-buildings-list">
+                
+              </ul>
+            </div>
+          </div>
+    
+          <div id="swap-button-container">
+            <!-- <button type="button" id="swap-button">
+              <img src="">
+            </button> -->
+          </div>
+        </div>
+        
+        <div id="button-container">
+          <button type="submit" id="findroute-button">길찾기</button>
+        </div>
+      </div>
+    </form>
+
   </div>
 
   <div id="map"></div>
