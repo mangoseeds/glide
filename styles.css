@@ -163,30 +163,32 @@ input[type="text"] {
 }
 
 .buildings-list-wrapper{
-    /* display: none; */
     position: fixed;
     width: 117px;
     overflow-y: scroll;
     overflow-x: auto;
     background-color: var(--blossom);
-    /* border: 1px solid #ccc; */
-    max-height: 60px;
-    border-radius: 15px;
+    min-height: 23px;
+    max-height: 100px;
+    border-radius: 10px;
     padding: 8px;
 }
 
-#origin-buildings-list-wrapper{
+#origin-buildings-list-wrapper,
+#destination-buildings-list-wrapper {
     display: none;
-}
-#destination-buildings-list-wrapper{
-    display: none;
+    position: absolute;
+    width: 117px;
+    background-color: var(--blossom);
+    z-index: 9999; /* Position in front of other elements */
+    max-height: 120px; /* Adjust the maximum height as needed */
+    overflow-y: auto; /* Enable scrolling if needed */
 }
 
-ul{
+ul {
     margin: 0;
     padding: 0;
 }
-
 
 .buildings-list {
     list-style-type: none;
@@ -201,4 +203,14 @@ ul{
 .buildings-list :last-child {
     cursor: pointer;
     margin-bottom: 0px;
+}
+
+.buildings-list li:hover {
+    background-color: var(--gray); /* Change background color on hover */
+}
+
+#swap-button-container {
+    position: relative;
+    top: 23vh + 48px;
+    left: 50%;
 }
