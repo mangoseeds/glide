@@ -20,14 +20,14 @@ async function initMap() {
     // directionsDisplay.setMap(map);
 
     // Handle button click event
-    document.getElementById('findroute-button').addEventListener('click', calculateRoute);
+    document.getElementById("findroute-button").addEventListener('click', calculateRoute);
 
 }
 
 function calculateRoute() {
     // Get origin and destination from input fields
-    const origin = document.getElementById('origin').value;
-    const destination = document.getElementById('destination').value;
+    const origin = document.getElementById("origin").value;
+    const destination = document.getElementById("destination").value;
 
     // Check if both origin and destination are provided
     if (origin === '' && destination === '') {
@@ -49,13 +49,13 @@ function calculateRoute() {
 
 }
 
-const originInput = document.getElementById('origin');
-const originBuildingsList = document.getElementById('origin-buildings-list');
-const originBuildingsListWrapper = document.getElementById('origin-buildings-list-wrapper');
+const originInput = document.getElementById("origin");
+const originBuildingsListWrapper = document.getElementById("origin-buildings-list-wrapper");
+const originBuildingsList = document.getElementById("origin-buildings-list");
 
-const destinationInput = document.getElementById('destination');
-const destinationBuildingsList = document.getElementById('destination-buildings-list');
-const destinationBuildingsListWrapper = document.getElementById('destination-buildings-list-wrapper');
+const destinationInput = document.getElementById("destination");
+const destinationBuildingsListWrapper = document.getElementById("destination-buildings-list-wrapper");
+const destinationBuildingsList = document.getElementById("destination-buildings-list");
 
 const buildings = [] // All buildings
 let buildingsFiltered = []; // Search-filtered buildings
@@ -65,6 +65,8 @@ fetch(buildingsURL)
   .then(buildings => {
     buildingsData = buildings; // Store the building data
 
+    console.log(buildings);
+    
     originInput.addEventListener('originInput', () => {
       const searchText = originInput.value();
       const filteredCountries = buildingsData.filter(building => building.toLowerCase().includes(searchText));
@@ -116,4 +118,3 @@ fetch(buildingsURL)
     });
   })
   .catch(error => console.error('Error fetching JSON data:', error));
-

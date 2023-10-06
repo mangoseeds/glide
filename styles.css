@@ -114,24 +114,34 @@ body {
 
 }
 
-input{
+/* input{
     border-radius: 10px;
     border: 0;
 }
 
 input[type="text"] {
     width: 83%;
-    padding: 8px;
-}
+    padding: 8px 13px 8px 13px;
+} */
 
 #origin{
     color:var(--green);
+    border-radius: 10px;
+    border: 0;
+    width: 107px;
+    height: auto;
+    padding: 8px 13px 8px 13px;
 }
 #origin:focus {
     color: var(--inputgray); /* Use the custom gray color for the input when focused */
 }
 #destination {
     color:var(--green);
+    border-radius: 10px;
+    border: 0;
+    width: 107px;
+    height: auto;
+    padding: 8px 13px 8px 13px;
 }
 #destination:focus {
     color: var(--inputgray); /* Use the custom gray color for the input when focused */
@@ -154,21 +164,41 @@ input[type="text"] {
 
 .buildings-list-wrapper{
     /* display: none; */
-    position: relative;
+    position: fixed;
+    width: 117px;
     overflow-y: scroll;
     overflow-x: auto;
     background-color: var(--blossom);
-    border: 1px solid #ccc;
-    max-height: 50px;
+    /* border: 1px solid #ccc; */
+    max-height: 60px;
+    border-radius: 15px;
+    padding: 8px;
+}
 
+#origin-buildings-list-wrapper{
+    display: none;
+}
+#destination-buildings-list-wrapper{
+    display: none;
+}
+
+ul{
+    margin: 0;
+    padding: 0;
 }
 
 
 .buildings-list {
     list-style-type: none;
-    padding: 0;
+    padding: 5px;
 }
+
 .buildings-list li {
     cursor: pointer;
-    padding: 2px;
+    margin-bottom: 8px;
+}
+
+.buildings-list :last-child {
+    cursor: pointer;
+    margin-bottom: 0px;
 }
