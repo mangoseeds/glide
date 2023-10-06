@@ -17,7 +17,7 @@
     left: 30px;
     top: 30px;
     width: 50px;
-    height: 50px;
+    height: 70px;
 }
 
 * {
@@ -54,18 +54,19 @@ body {
     left: 0;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 28vh;
+    margin-top: 23vh;
     margin-bottom: auto;
 
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 15px;
+    padding: 10px;
     height: auto;
     width: 200px;
     background-color: var(--gray);
     overflow: hidden;
     border-radius: 15px;
+    
 }
 
 #textbox-container{
@@ -75,35 +76,42 @@ body {
     height: auto;
     /* width: 100%; */
     flex: 5;
+    padding: 0;
+    margin: 0;
 }
 
 #button-container{
     display: flex;
     height: 70px;
-    width: auto;
+    /* width: auto; */
     flex: 2;
 }
 
-#origin-text-box {
-    width: 100%;
+#origin-textbox-container {
+    width: 133px;
     height: auto;
-    padding: 0;
+    padding: 3px;
     margin: 0;
 }
 
+
 #origin {
     background-color: var(--blossom);
+    width: 117px;
+
 }
 
-#destination-text-box {
-    width: 100%;
+#destination-textbox-container {
+    width: 133px;
     height: auto;
-    padding: 0;
+    padding: 3px;
     margin: 0;
 }
 
 #destination {
     background-color: var(--blossom);
+    width: 117px;
+
 }
 
 input{
@@ -118,7 +126,6 @@ input[type="text"] {
 
 #origin{
     color:var(--green);
-    margin-bottom: 10px;
 }
 #origin:focus {
     color: var(--inputgray); /* Use the custom gray color for the input when focused */
@@ -128,6 +135,10 @@ input[type="text"] {
 }
 #destination:focus {
     color: var(--inputgray); /* Use the custom gray color for the input when focused */
+}
+
+#button-container {
+    padding: 3px;
 }
 
 #findroute-button {
@@ -149,9 +160,7 @@ input[type="text"] {
     background-color: var(--blossom);
     border: 1px solid #ccc;
     max-height: 50px;
-}
-#origin-buildings-list-wrapper{
-    
+
 }
 
 
