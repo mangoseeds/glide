@@ -61,7 +61,7 @@ body {
     flex-direction: row;
     align-items: center;
     padding: 10px;
-    height: auto;
+    height: 76px;
     width: 200px;
     background-color: var(--gray);
     overflow: hidden;
@@ -168,10 +168,10 @@ input[type="text"] {
     overflow-y: scroll;
     overflow-x: auto;
     background-color: var(--blossom);
-    min-height: 23px;
+    min-height: 0px;
     max-height: 100px;
     border-radius: 10px;
-    padding: 8px;
+    padding: 0;
 }
 
 #origin-buildings-list-wrapper,
@@ -183,6 +183,7 @@ input[type="text"] {
     z-index: 9999; /* Position in front of other elements */
     max-height: 120px; /* Adjust the maximum height as needed */
     overflow-y: auto; /* Enable scrolling if needed */
+    min-height: 0px;
 }
 
 ul {
@@ -195,10 +196,12 @@ ul {
     padding: 5px;
 }
 
-.buildings-list li {
+/* .buildings-list li {
     cursor: pointer;
+    margin-top: 8px;
     margin-bottom: 8px;
-}
+    padding-left: 8px;
+} */
 
 .buildings-list :last-child {
     cursor: pointer;
@@ -210,7 +213,36 @@ ul {
 }
 
 #swap-button-container {
-    position: relative;
+    position: fixed;
     top: 23vh + 48px;
-    left: 50%;
+    left: auto;
+    right: auto;
 }
+
+#swap-button {
+    width: 30px;
+    height: 30px;
+    background-image: url("swap-button.png");
+    background-size: cover;
+    border: none;
+    border-radius: 50%;
+    position: fixed;
+    top: calc(23vh + 48px - 15px);
+    left: 50%;
+    /* right: auto; */
+}
+
+/* fade-out animation */
+.fade-out {
+    animation: fadeOut 0.5s ease-in-out;
+  }
+  
+  /* Define the keyframes for the fade-out animation */
+  @keyframes fadeOut {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }

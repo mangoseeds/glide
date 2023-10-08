@@ -89,6 +89,7 @@ function autocomplete(input, list, wrapper) {
           closeList(wrapper);
         });
         suggestion.style.cursor = 'pointer';
+        suggestion.style.margin = '8px';
 
         suggestions.appendChild(suggestion);
       }
@@ -115,6 +116,47 @@ fetch(buildingsURL)
   })
   .catch(error => console.error('Error fetching JSON data:', error));
 
- // Initialize the map when the page loads
-google.maps.event.addDomListener(window, 'load', initMap);
 
+  document.addEventListener("DOMContentLoaded", function() {
+    // Get references to the origin and destination input elements
+    const originInput = document.getElementById("origin");
+    const destinationInput = document.getElementById("destination");
+  
+    // Get a reference to the swap button
+    const swapButton = document.getElementById("swap-button");
+  
+    // Add a click event listener to the swap button
+    swapButton.addEventListener("click", function() {
+      // Get the current values of origin and destination inputs
+      const originValue = originInput.value;
+      const destinationValue = destinationInput.value;
+  
+      // Check if both inputs are empty
+      if (!originValue && !destinationValue) {
+        // If both inputs are empty, do nothing
+        return;
+      }
+      
+      // Add a smooth transition effect to the text values
+      originInput.style.transition = "color 0.5s";
+      destinationInput.style.transition = "color 0.5s";
+  
+      // Temporarily change the text color to transparent
+      originInput.style.color = "transparent";
+      destinationInput.style.color = "transparent";
+  
+      // After a short delay, swap the values and fade them back in
+      setTimeout(() => {
+        originInput.value = destinationValue;
+        destinationInput.value = originValue;
+  
+        // Restore text color
+        originInput.style.color = "var(--green)";
+        destinationInput.style.color = "var(--green)";
+  
+        // Clear the transition property to avoid affecting future input changes
+        originInput.style.transition = "color 0.6s";
+        destinationInput.style.transition = "color 0.6s";
+      }, 250); // delay milliseconds
+    });
+  });
