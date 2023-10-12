@@ -1,4 +1,4 @@
-@font-face { font-family: ewha; src: url('ewha.TTF'); }
+@font-face { font-family: ewha; src: url('../fonts/ewha.ttf'); }
 :root {
     --green: #00462A;
     --blossom: #FFFDF1;
@@ -222,7 +222,7 @@ ul {
 #swap-button {
     width: 30px;
     height: 30px;
-    background-image: url("swap-button.png");
+    background-image: url("../images/swap-button.png");
     background-size: cover;
     border: none;
     border-radius: 50%;

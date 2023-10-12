@@ -3,7 +3,9 @@ let map;
 let directionsService;
 let directionsDisplay;
 
-const buildingsURL = './buildings.json'; // Replace with the path to your JSON file
+let buildingsData;
+
+const buildingsURL = "/static/data/buildings.json" ; // Replace with the path to your JSON file
 
 async function initMap() {
 
@@ -33,13 +35,13 @@ function calculateRoute() {
   if (origin === '' && destination === '') {
     alert('입력이 올바른지 확인해주세요.');
     return;
-  } else if (not(buildingsData.contains(origin))) {
+  } else if (!buildingsData.contains(origin)) {
     alert('출발지가 올바른지 확인해주세요.');
     return;
-  } else if (not(buildingsData.contains(destination))) {
+  } else if (!buildingsData.contains(destination)) {
     alert('도착지가 올바른지 확인해주세요.');
     return;
-  } else if (buildingsData.contains(origin) && buildingsData.contains(destination)) {
+  } else if (buildingsData.includes(origin) && buildingsData.includes(destination)) {
     print("yes!")
     //find route algo
   } else {

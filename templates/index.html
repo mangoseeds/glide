@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Glide</title>
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="../static/css/styles.css">
 </head>
 
 <body>
@@ -12,11 +13,11 @@
   <div id="map-container">
     <a href ="./index.html">
       <div id="logo">
-        <img src="glide-logo.png" id="glide-logo" href>
+        <img src="../static/images/glide-logo.png" id="glide-logo" href>
       </div>
     </a>
 
-    <form id="route-form" action="directions.html" method="GET" target="_self" autocomplete="off">
+    <form id="route-form" action="/" method="POST" target="_self" autocomplete="off">
       <div id="inputs-container">
 
         <div id="textbox-container">
@@ -57,6 +58,6 @@
   <script async
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4i1BVl5lkiaP8qTtIc48-ZJ8OJGXwFQc&callback=initMap">
 </script>
-  <script src="/app.js"></script>
+  <script src="../static/js/main.js"></script>
 </body>
 </html>
