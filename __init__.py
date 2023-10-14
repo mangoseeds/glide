@@ -6,22 +6,7 @@ import os
 def create_app():
     app = Flask(__name__)
 
-    @app.route("/", methods=['POST', 'GET'])
-    def index():
-        results = None
-
-        if request.method == 'POST':
-            origin = request.form.get('origin')
-            destination = request.form.get('destination')
-
-            # routing here
-
-            # pass the results to the directions template
-            results = {
-                'origin': origin,
-                'destination': destination,
-                # Add any other calculated data to pass
-            }
-        return render_template('index.html', results=results)
+    from .views import main_views
+    app.register_blueprint(main_views.bp)
 
     return app
