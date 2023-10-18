@@ -1,10 +1,18 @@
 // Initialize variables for the map and directions service
 let map;
+
 let directionsService;
 let directionsDisplay;
 let buildingsData;
 
 const buildingsURL = "/static/data/buildings.json" ; // Replace with the path to your JSON file
+let result; // Define as needed
+const originInput = document.getElementById("origin");
+const destinationInput = document.getElementById("destination");
+const originBuildingsListWrapper = document.getElementById("origin-buildings-list-wrapper");
+const originBuildingsList = document.getElementById("origin-buildings-list");
+const destinationBuildingsListWrapper = document.getElementById("destination-buildings-list-wrapper");
+const destinationBuildingsList = document.getElementById("destination-buildings-list");
 
 let defaultMapLatLng = { lat: 37.563434, lng: 126.947945 };
 let mapOptions = {
@@ -36,7 +44,7 @@ async function initMap() {
 
 function calculateRoute() {
   // create request
-  var request = {
+  let request = {
     origin: document.getElementById("origin").value,
     destination: document.getElementById("destination").value,
     travelMode: google.maps.TravelMode.WALKING, // available modes: WALKING, DRIVING, BICYCLING, TRANSIT
@@ -45,9 +53,10 @@ function calculateRoute() {
 
   // pass the request to the route method
   directionsService.route(request, (result, status) => {
+    const output = document.querySelector('#output')
+
     if (status === google.maps.DirectionsStatus.OK) {
       // get distance and time
-      const output = document.querySelector('#output')
       output.innerHTML = "<div class='alert-info'> From: " + originInput.value
           + " .<br />To: " + destinationInput.value
           + " .<br />Walking Distance: " + result.routes[0].legs[0].distance.text
@@ -91,20 +100,11 @@ function calculateRoute() {
 }
 
 let options = {
-  types: ['(buildings)']
+  types: ['(school)']
 }
-
-const originInput = document.getElementById("origin");
-const originBuildingsListWrapper = document.getElementById("origin-buildings-list-wrapper");
-const originBuildingsList = document.getElementById("origin-buildings-list");
-
-const destinationInput = document.getElementById("destination");
-const destinationBuildingsListWrapper = document.getElementById("destination-buildings-list-wrapper");
-const destinationBuildingsList = document.getElementById("destination-buildings-list");
 
 let autocomplete1 = new google.maps.places.Autocomplete(originInput, options);
 let autocomplete2 = new google.maps.places.Autocomplete(destinationInput, options);
-
 
 // function autocomplete(input, list, wrapper) {
 //   input.addEventListener('input', function () {
@@ -210,4 +210,4 @@ let autocomplete2 = new google.maps.places.Autocomplete(destinationInput, option
 //     });
 //   });
 
-  initMap();
+initMap();
