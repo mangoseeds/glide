@@ -45,8 +45,8 @@ async function initMap() {
 function calculateRoute() {
   // create request
   let request = {
-    origin: document.getElementById("origin").value,
-    destination: document.getElementById("destination").value,
+    origin: originInput.value,
+    destination: destinationInput.value,
     travelMode: google.maps.TravelMode.WALKING, // available modes: WALKING, DRIVING, BICYCLING, TRANSIT
     unitSystem: google.maps.UnitSystem.IMPERIAL
   }
@@ -76,10 +76,7 @@ function calculateRoute() {
       output.innerHTML = "<div class='alert-danger'>Could not retrieve walking route.</div>";
     }
   });
-  // // Get origin and destination from input fields
-  // const origin = document.getElementById("origin").value;
-  // const destination = document.getElementById("destination").value;
-  //
+
   // // Check if both origin and destination are provided
   // if (origin === '' && destination === '') {
   //   alert('입력이 올바른지 확인해주세요.');

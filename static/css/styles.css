@@ -215,7 +215,7 @@ ul {
 
 #swap-button-container {
     position: fixed;
-    top: 23vh + 48px;
+    top: calc(23vh + 48px);
     left: auto;
     right: auto;
 }
