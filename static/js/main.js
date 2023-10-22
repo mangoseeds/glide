@@ -31,9 +31,6 @@ function initMap() {
 
   directionsDisplay.setMap(map);
 
-  // // Handle button click event
-  // document.getElementById('findroute-button').addEventListener('click', calculateRoute);
-
 }
 
 function autocomplete(input, list, wrapper) {
@@ -145,25 +142,28 @@ function calculateRoute() {
     output.innerHTML = "<div class='alert-danger'>Please enter valid building names.</div>";
     return;
   }
-
-  // create request
-  const request = {
-    origin: origin,
-    destination: destination,
-    travelMode: google.maps.TravelMode.WALKING, // available modes: WALKING, DRIVING, BICYCLING, TRANSIT
-    unitSystem: google.maps.UnitSystem.METRIC
+  else {
+    document.getElementById('route-form').submit();
   }
 
-  // pass the request to the route method
-  directionsService.route(request, (result, status) => {
-    if (status === google.maps.DirectionsStatus.OK) {
-      // get distance and time
-      displayRoute(result);
-    } else {
-      // Display error message
-      handleRouteError();
-    }
-  });
+  // // create request
+  // const request = {
+  //   origin: origin,
+  //   destination: destination,
+  //   travelMode: google.maps.TravelMode.WALKING, // available modes: WALKING, DRIVING, BICYCLING, TRANSIT
+  //   unitSystem: google.maps.UnitSystem.METRIC
+  // }
+  //
+  // // pass the request to the route method
+  // directionsService.route(request, (result, status) => {
+  //   if (status === google.maps.DirectionsStatus.OK) {
+  //     // get distance and time
+  //     displayRoute(result);
+  //   } else {
+  //     // Display error message
+  //     handleRouteError();
+  //   }
+  // });
 }
 
 function isValidBuildingName(buildingName) {
@@ -218,7 +218,7 @@ document.getElementById('route-form').addEventListener('submit', function (e) {
   };
 
   // Make an HTTP POST request
-  fetch('/your-python-endpoint', {
+  fetch('/routes.py', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

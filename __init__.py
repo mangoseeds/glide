@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import os
 
+
 # FLASK_APP=__init__.py flask run
 
 def create_app():
