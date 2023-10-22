@@ -167,6 +167,10 @@ function calculateRoute() {
 }
 
 function isValidBuildingName(buildingName) {
+  console.log(buildingName);
+  console.log(buildingsData);
+  console.log(buildingsData.includes(buildingName));
+
   return buildingsData.includes(buildingName);
 }
 
@@ -197,5 +201,37 @@ function handleRouteError(){
 
 document.getElementById('findroute-button').addEventListener('click', () => {
   calculateRoute(); // Call the route calculation function
+});
+
+document.getElementById('route-form').addEventListener('submit', function (e) {
+  e.preventDefault(); // Prevent the default form submission
+
+  const origin = originInput.value;
+  const destination = destinationInput.value;
+
+  // any client-side validation to add?
+
+  // Create a JSON object with the form data
+  const formData = {
+    origin,
+    destination,
+  };
+
+  // Make an HTTP POST request
+  fetch('/your-python-endpoint', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(formData),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      // Handle the response from your Python backend
+      console.log(data); // You can update the page or display the response as needed
+    })
+    .catch((error) => {
+      console.error('Error submitting the form:', error);
+    });
 });
 
