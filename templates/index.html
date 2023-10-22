@@ -9,11 +9,11 @@
 </head>
 
 <body>
-  
+
   <div id="map-container">
     <a href ="./index.html">
       <div id="logo">
-        <img src="../static/images/glide-logo.png" id="glide-logo" href>
+        <img src="../static/images/glide-logo.png" id="glide-logo" alt="glide logo image">
       </div>
     </a>
 
@@ -25,25 +25,25 @@
             <input type="text" id="origin" placeholder="출발지 입력">
             <div class="buildings-list-wrapper" id="origin-buildings-list-wrapper">
               <ul class="buildings-list" id="origin-buildings-list">
-                
+
               </ul>
             </div>
           </div>
-    
+
           <div id="destination-textbox-container">
             <input type="text" id="destination" placeholder="도착지 입력">
             <div class="buildings-list-wrapper" id="destination-buildings-list-wrapper">
               <ul class="buildings-list" id="destination-buildings-list">
-                
+
               </ul>
             </div>
           </div>
-    
+
           <div id="swap-button-container">
             <button type="button" id="swap-button"></button>
           </div>
         </div>
-        
+
         <div id="button-container">
           <button type="submit" id="findroute-button">길찾기</button>
         </div>
@@ -53,11 +53,7 @@
   </div>
 
   <div id="map"></div>
-
-
-  <script async
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4i1BVl5lkiaP8qTtIc48-ZJ8OJGXwFQc&callback=initMap">
-</script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4i1BVl5lkiaP8qTtIc48-ZJ8OJGXwFQc&callback=initMap" async defer></script>
   <script src="../static/js/main.js"></script>
 </body>
 </html>

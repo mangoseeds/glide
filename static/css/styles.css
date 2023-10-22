@@ -49,6 +49,7 @@ body {
     width: 100%;
 }
 
+
 #inputs-container {
     top: 0;
     left: 0;
@@ -66,7 +67,7 @@ body {
     background-color: var(--gray);
     overflow: hidden;
     border-radius: 15px;
-    
+
 }
 
 #textbox-container{
@@ -214,7 +215,7 @@ ul {
 
 #swap-button-container {
     position: fixed;
-    top: 23vh + 48px;
+    top: calc(23vh + 48px);
     left: auto;
     right: auto;
 }
@@ -236,7 +237,7 @@ ul {
 .fade-out {
     animation: fadeOut 0.5s ease-in-out;
   }
-  
+
   /* Define the keyframes for the fade-out animation */
   @keyframes fadeOut {
     0% {
@@ -246,3 +247,8 @@ ul {
       opacity: 0;
     }
   }
+
+#output {
+    text-align: center;
+    font-size: 2em;
+}
