@@ -1,7 +1,7 @@
 from flask import Flask
 import pyrebase
 
-config = {
+firebaseConfig = {
         "apiKey": "AIzaSyCrpjD8HRk2YFPRWu0YB78By_OH3fyySQg",
         "authDomain": "glide-cce9b.firebaseapp.com",
         "databaseURL": "https://glide-cce9b-default-rtdb.firebaseio.com",
@@ -12,10 +12,13 @@ config = {
 }
 
 app = Flask(__name__)
-firebase = pyrebase.initialize_app(config)
-db = firebase.database()
+firebase = pyrebase.initialize_app(firebaseConfig)
 
+db = firebase.database()
 
 # Configuration settings and any app-wide setup can go here
 
 from app import routes
+
+if __name__ == '__main__':
+        app.run(debug=True)

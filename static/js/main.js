@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function() {
   .then(buildings => {
     buildingsData = buildings; // Store the building data
 
-    console.log(buildingsData);
+    // console.log(buildingsData);
 
     autocomplete(originInput, buildingsData, originBuildingsListWrapper);
     autocomplete(destinationInput, buildingsData, destinationBuildingsListWrapper);

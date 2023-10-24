@@ -1,7 +1,8 @@
 from flask import render_template, request, jsonify
 from glide import app
+import pyrebase
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('index.html')
 
