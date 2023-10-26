@@ -12,10 +12,14 @@ firebaseConfig = {
 }
 
 app = Flask(__name__)
-# firebase = pyrebase.initialize_app(firebaseConfig)
-# db = firebase.database()
+firebase = pyrebase.initialize_app(firebaseConfig)
+db = firebase.database()
 
-# Configuration settings and any app-wide setup can go here
+@app.route('/get_buildings', methods=['GET'])
+def get_buildings():
+    buildings = db.child('buildings').get()
+    building_names = [key for key in buildings.val()]
+    return jsonify(building_names)
 
 @app.route('/')
 def index():

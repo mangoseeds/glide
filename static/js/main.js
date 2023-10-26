@@ -1,4 +1,3 @@
-const buildingsURL = "{{ url_for('static', filename='data/buildings.json') }}"
 const originInput = document.getElementById("origin");
 const destinationInput = document.getElementById("destination");
 const originBuildingsListWrapper = document.getElementById("origin-buildings-list-wrapper");
@@ -83,20 +82,25 @@ function autocomplete(input, list, wrapper) {
 
 document.addEventListener("DOMContentLoaded", function() {
 
-  console.log(buildingsURL)
-  fetch(buildingsURL)
-  .then(response => response.json())
-  .then(buildings => {
-    buildingsData = buildings; // Store the building data
+  fetch("/get_buildings")
+        .then(response => {
+            if (response.ok) {
+                return response.text(); // Change to response.json() if the response is JSON
+            } else {
+                throw new Error("Failed to fetch data");
+            }
+        })
+        .then(responseData => {
+            buildingsData = responseData; // Store the data as a JSON string
+            // You can parse the JSON string here if needed
+            // const parsedData = JSON.parse(data);
+        })
+        .catch(error => {
+            console.error("Error fetching building list: ", error);
+        });
 
-    console.log(buildingsData);
+  console.log(buildingsData);
 
-    autocomplete(originInput, buildingsData, originBuildingsListWrapper);
-    autocomplete(destinationInput, buildingsData, destinationBuildingsListWrapper);
-
-  })
-  .catch(error => console.error('Error fetching JSON data:', error));
-  
   // Add a click event listener to the swap button
   swapButton.addEventListener("click", function() {
     // Get the current values of origin and destination inputs
@@ -148,16 +152,15 @@ document.addEventListener("DOMContentLoaded", function() {
             window.location = `submitted?origin=${data.origin}destination=${data.destination}`;
 
           })
-          .catch(error => console.errer(error));
+          .catch(error => console.error(error));
     }
     else {
       errorText.textContent = "Please check your input again.";
     }
 
-  })
+  });
 
 });
-
 
 // function validateForm() {
   // const origin = originInput.value;
