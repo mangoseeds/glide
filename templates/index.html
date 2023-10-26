@@ -17,25 +17,21 @@
       </div>
     </a>
 
-    <form id="route-form" action="/" method="POST" target="_self" autocomplete="off">
+    <form id="route-form" onsubmit="return false;">
       <div id="inputs-container">
 
         <div id="textbox-container">
           <div id="origin-textbox-container">
             <input type="text" id="origin" placeholder="출발지 입력">
             <div class="buildings-list-wrapper" id="origin-buildings-list-wrapper">
-              <ul class="buildings-list" id="origin-buildings-list">
-
-              </ul>
+              <ul class="buildings-list" id="origin-buildings-list"></ul>
             </div>
           </div>
 
           <div id="destination-textbox-container">
             <input type="text" id="destination" placeholder="도착지 입력">
             <div class="buildings-list-wrapper" id="destination-buildings-list-wrapper">
-              <ul class="buildings-list" id="destination-buildings-list">
-
-              </ul>
+              <ul class="buildings-list" id="destination-buildings-list"></ul>
             </div>
           </div>
 
@@ -52,9 +48,35 @@
 
   </div>
 
+  <p id="error-text" style="color: red;"></p>
+
   <div id="map"></div>
   <div id="output"></div>
 
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js"></script>
+
+  <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCrpjD8HRk2YFPRWu0YB78By_OH3fyySQg",
+        authDomain: "glide-cce9b.firebaseapp.com",
+        databaseURL: "https://glide-cce9b-default-rtdb.firebaseio.com",
+        projectId: "glide-cce9b",
+        storageBucket: "glide-cce9b.appspot.com",
+        messagingSenderId: "959009446750",
+        appId: "1:959009446750:web:1ed6c30c71b082b6cacdcf"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+  </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4i1BVl5lkiaP8qTtIc48-ZJ8OJGXwFQc&callback=initMap" async defer></script>
   <script src="../static/js/main.js"></script>
 </body>

@@ -1,4 +1,4 @@
-const buildingsURL = "../glide/static/data/buildings.json" ; // Replace with the path to your JSON file
+const buildingsURL = "{{ url_for('static', filename='data/buildings.json') }}"
 const originInput = document.getElementById("origin");
 const destinationInput = document.getElementById("destination");
 const originBuildingsListWrapper = document.getElementById("origin-buildings-list-wrapper");
@@ -6,6 +6,8 @@ const originBuildingsList = document.getElementById("origin-buildings-list");
 const destinationBuildingsListWrapper = document.getElementById("destination-buildings-list-wrapper");
 const destinationBuildingsList = document.getElementById("destination-buildings-list");
 const swapButton = document.getElementById("swap-button");
+const routeForm = document.getElementById('route-form');
+const errorText = document.getElementById('error-text');
 
 let map;
 let directionsService;
@@ -81,12 +83,13 @@ function autocomplete(input, list, wrapper) {
 
 document.addEventListener("DOMContentLoaded", function() {
 
+  console.log(buildingsURL)
   fetch(buildingsURL)
   .then(response => response.json())
   .then(buildings => {
     buildingsData = buildings; // Store the building data
 
-    // console.log(buildingsData);
+    console.log(buildingsData);
 
     autocomplete(originInput, buildingsData, originBuildingsListWrapper);
     autocomplete(destinationInput, buildingsData, destinationBuildingsListWrapper);
@@ -127,25 +130,52 @@ document.addEventListener("DOMContentLoaded", function() {
       destinationInput.style.transition = "color 0.6s";
     }, 250); // delay milliseconds
   });
+
+  routeForm.addEventListener("submit", function() {
+    errorText.textContent = "";
+
+    const origin = originInput.value;
+    const destination = destinationInput.value;
+
+    if (isValidBuildingName(origin) && isValidBuildingName(destination)) {
+      fetch("/process", {
+        method: "POST",
+        body: JSON.stringify( { origin: origin,
+                                      destination: destination })
+      })
+          .then(response => response.json())
+          .then(data => {
+            window.location = `submitted?origin=${data.origin}destination=${data.destination}`;
+
+          })
+          .catch(error => console.errer(error));
+    }
+    else {
+      errorText.textContent = "Please check your input again.";
+    }
+
+  })
+
 });
 
 
-function calculateRoute() {
-
-  const origin = originInput.value;
-  const destination = destinationInput.value;
-
-  // Verify if the input values are valid building names
-  if (!isValidBuildingName(origin) || !isValidBuildingName(destination)) {
-    // Display an error message if input is invalid
-    const output = document.querySelector('#output');
-    output.innerHTML = "<div class='alert-danger'>Please enter valid building names.</div>";
-    return;
-  }
-  else {
-    document.getElementById('route-form').submit();
-  }
-
+// function validateForm() {
+  // const origin = originInput.value;
+  // const destination = destinationInput.value;
+  //
+  // console.log(origin);
+  // console.log(destination);
+  //
+  // // Verify if the input values are valid building names
+  // if (!isValidBuildingName(origin) || !isValidBuildingName(destination)) {
+  //   // Display an error message if input is invalid
+  //   const output = document.querySelector('#output');
+  //   output.innerHTML = "<div class='alert-danger'>Please enter valid building names.</div>";
+  //   return;
+  // }
+  // else {
+  //   document.getElementById('route-form').submit();
+  // }
   // // create request
   // const request = {
   //   origin: origin,
@@ -164,7 +194,7 @@ function calculateRoute() {
   //     handleRouteError();
   //   }
   // });
-}
+// }
 
 function isValidBuildingName(buildingName) {
   console.log(buildingName);
@@ -174,64 +204,64 @@ function isValidBuildingName(buildingName) {
   return buildingsData.includes(buildingName);
 }
 
-function displayRoute(result) {
-  // Display route information on the map
-  const output = document.querySelector('#output');
-  output.innerHTML = "<div class='alert-info'> From: " + originInput.value
-      + " .<br />To: " + destinationInput.value
-      + " .<br />Walking Distance: " + result.routes[0].legs[0].distance.text
-      + " .<br />Duration: " + result.routes[0].legs[0].duration.text
-      + " .</div>";
+// function displayRoute(result) {
+//   // Display route information on the map
+//   const output = document.querySelector('#output');
+//   output.innerHTML = "<div class='alert-info'> From: " + originInput.value
+//       + " .<br />To: " + destinationInput.value
+//       + " .<br />Walking Distance: " + result.routes[0].legs[0].distance.text
+//       + " .<br />Duration: " + result.routes[0].legs[0].duration.text
+//       + " .</div>";
+//
+//   // Set the map to display the route
+//   directionsDisplay.setDirections(result);
+// }
 
-  // Set the map to display the route
-  directionsDisplay.setDirections(result);
-}
+// function handleRouteError(){
+//   // Display error message
+//   const output = document.querySelector('#output');
+//   output.innerHTML = "<div class='alert-danger'>Could not retrieve walking route.</div>";
+//
+//   // Delete route from map
+//   directionsDisplay.setDirections({ routes: [] });
+//
+//   // Center map back to default
+//   map.setCenter(defaultMapLatLng);
+// }
 
-function handleRouteError(){
-  // Display error message
-  const output = document.querySelector('#output');
-  output.innerHTML = "<div class='alert-danger'>Could not retrieve walking route.</div>";
-  
-  // Delete route from map
-  directionsDisplay.setDirections({ routes: [] });
-
-  // Center map back to default
-  map.setCenter(defaultMapLatLng);
-}
-
-document.getElementById('findroute-button').addEventListener('click', () => {
-  calculateRoute(); // Call the route calculation function
-});
-
-document.getElementById('route-form').addEventListener('submit', function (e) {
-  e.preventDefault(); // Prevent the default form submission
-
-  const origin = originInput.value;
-  const destination = destinationInput.value;
-
-  // any client-side validation to add?
-
-  // Create a JSON object with the form data
-  const formData = {
-    origin,
-    destination,
-  };
-
-  // Make an HTTP POST request
-  fetch('/routes.py', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(formData),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      // Handle the response from your Python backend
-      console.log(data); // You can update the page or display the response as needed
-    })
-    .catch((error) => {
-      console.error('Error submitting the form:', error);
-    });
-});
+// document.getElementById('findroute-button').addEventListener('click', () => {
+//   validateForm(); // Call the route calculation function
+// });
+//
+// document.getElementById('route-form').addEventListener('submit', function (e) {
+//   e.preventDefault(); // Prevent the default form submission
+//
+//   const origin = originInput.value;
+//   const destination = destinationInput.value;
+//
+//   // any client-side validation to add?
+//
+//   // Create a JSON object with the form data
+//   const formData = {
+//     origin,
+//     destination,
+//   };
+//
+//   // Make an HTTP POST request
+//   fetch('../app/routes.py', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify(formData),
+//   })
+//     .then((response) => response.json())
+//     .then((data) => {
+//       // Handle the response from your Python backend
+//       console.log(data); // You can update the page or display the response as needed
+//     })
+//     .catch((error) => {
+//       console.error('Error submitting the form:', error);
+//     });
+// });
 
