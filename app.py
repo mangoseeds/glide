@@ -1,19 +1,22 @@
 from flask import Flask,render_template, request, jsonify
 import pyrebase
+import firebase_admin
+from firebase_admin import credentials, db
 
-firebaseConfig = {
-        "apiKey": "AIzaSyCrpjD8HRk2YFPRWu0YB78By_OH3fyySQg",
-        "authDomain": "glide-cce9b.firebaseapp.com",
-        "databaseURL": "https://glide-cce9b-default-rtdb.firebaseio.com",
-        "projectId": "glide-cce9b",
-        "storageBucket": "glide-cce9b.appspot.com",
-        "messagingSenderId": "959009446750",
-        "appId": "1:959009446750:web:1ed6c30c71b082b6cacdcf"
-}
+from config import firebaseConfig
+
+# cd to venv;
+
+cred = credentials.Certificate(firebaseConfig)
+firebase_admin.initialize_app(cred, {
+    "databaseURL" : "https://glide-cce9b-default-rtdb.firebaseio.com"
+})
+
+ref = db.reference()
+# ref.update({'test': '10000'})
 
 app = Flask(__name__)
-firebase = pyrebase.initialize_app(firebaseConfig)
-db = firebase.database()
+
 
 @app.route('/get_buildings', methods=['GET'])
 def get_buildings():
