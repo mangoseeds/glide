@@ -12,16 +12,16 @@ firebase_admin.initialize_app(cred, {
     "databaseURL" : "https://glide-cce9b-default-rtdb.firebaseio.com"
 })
 
-ref = db.reference()
-# ref.update({'test': '10000'})
+ref = db.reference('buildings')
+# ref.update({'test': '99999'})
 
 app = Flask(__name__)
 
-
 @app.route('/get_buildings', methods=['GET'])
 def get_buildings():
-    buildings = db.child('buildings').get()
-    building_names = [key for key in buildings.val()]
+    buildings = ref.get()
+    building_names = [key for key in buildings]
+    print(building_names)
     return jsonify(building_names)
 
 @app.route('/')
