@@ -16,12 +16,13 @@ ref = db.reference('buildings')
 # ref.update({'test': '99999'})
 
 app = Flask(__name__)
+app.config['JSON_AS_ASCII'] = False
 
 @app.route('/get_buildings', methods=['GET'])
 def get_buildings():
     buildings = ref.get()
     building_names = [key for key in buildings]
-    print(building_names)
+    # print(jsonify(building_names))
     return jsonify(building_names)
 
 @app.route('/')

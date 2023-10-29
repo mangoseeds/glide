@@ -36,6 +36,7 @@ function initMap() {
 
 function autocomplete(input, list, wrapper) {
   input.addEventListener('input', function () {
+
     closeList(wrapper);
 
     //If the input is empty, exit the function
@@ -85,21 +86,19 @@ document.addEventListener("DOMContentLoaded", function() {
   fetch("/get_buildings")
         .then(response => {
             if (response.ok) {
-                return response.text(); // Change to response.json() if the response is JSON
+                return response.json();
             } else {
                 throw new Error("Failed to fetch data");
             }
         })
         .then(responseData => {
-            buildingsData = responseData; // Store the data as a JSON string
-            // You can parse the JSON string here if needed
-            // const parsedData = JSON.parse(data);
+            buildingsData = responseData;
+            autocomplete(originInput, buildingsData, originBuildingsListWrapper);
+            autocomplete(destinationInput, buildingsData, destinationBuildingsListWrapper);
         })
         .catch(error => {
             console.error("Error fetching building list: ", error);
         });
-
-  console.log(buildingsData);
 
   // Add a click event listener to the swap button
   swapButton.addEventListener("click", function() {
