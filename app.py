@@ -29,35 +29,22 @@ def get_buildings():
 def index():
     return render_template('index.html')
 
-@app.route('/directions', methods=['POST'])
-def calculate_route():
-    origin = request.form.get('origin')
-    destination = request.form.get('destination')
+@app.route('/coordinates', methods=['GET'])
+def get_coordinates_from_db():
+    origin = request.args.get('org')
+    destination = request.args.get('dst')
 
-    # route calculation with default google maps api
-    calculate_google_maps_route(origin, destination)
+    origin_coordinates = ref.child(origin).get()
+    dest_coordinates = ref.child(destination).get()
+    print(origin + " = " + str(origin_coordinates))
+    print(destination + " = " + str(dest_coordinates))
 
-    print("origin:", origin)
-    print("destination:", destination)
+    return jsonify( { "origin": origin_coordinates,
+                      "destination": dest_coordinates })
 
-    route = [origin, destination]
-    # route calculation with default google maps api
-    # calculate_custom_route(origin, destination)
-
-    return jsonify({ 'route': route })
-
-
-# Define functions for calculating routes using Google Maps API and custom data
-# You can import these functions into routes.py
-
-def calculate_google_maps_route(origin, destination):
-    # Implement the Google Maps route calculation logic here
-    pass
-
-def calculate_custom_route(origin, destination):
-    # Implement custom routing logic here
-    pass
-
+# @app.route('/directions', methods=['GET'])
+# def directions():
+#     return render_template('directions.html')
 
 
 if __name__ == '__main__':

@@ -13,6 +13,9 @@ let directionsService;
 let directionsDisplay;
 let buildingsData;
 
+let originCoordinates;
+let destinationCoordinates;
+
 let defaultMapLatLng = { lat: 37.563434, lng: 126.947945 }; //overall school scope
 let mapOptions;
 
@@ -31,9 +34,9 @@ function initMap() {
   directionsDisplay = new google.maps.DirectionsRenderer();
 
   directionsDisplay.setMap(map);
-
 }
 
+// Autocomplete the text input field so that the user can select from a list of buildings
 function autocomplete(input, list, wrapper) {
   input.addEventListener('input', function () {
 
@@ -72,7 +75,6 @@ function autocomplete(input, list, wrapper) {
         suggestions.appendChild(suggestion);
       }
     }
-
   });
 
   function closeList(wrapper) {
@@ -81,18 +83,27 @@ function autocomplete(input, list, wrapper) {
   }
 }
 
+// Find route using Google API with the given origin and destination and its coordinates
+function findRoute(origin, originCoordinates, destination, destinationCoordinates) {
+  console.log(origin + " = " + originCoordinates);
+  console.log(destination + " = " + destinationCoordinates);
+
+}
+
 document.addEventListener("DOMContentLoaded", function() {
 
+  // Fetch the name of buildings and store them in buildingsData
   fetch("/get_buildings")
         .then(response => {
             if (response.ok) {
                 return response.json();
             } else {
-                throw new Error("Failed to fetch data");
+                throw new Error("Failed to fetch data from /get_buildings");
             }
         })
         .then(responseData => {
             buildingsData = responseData;
+            // attach autocomplete function to the two inputs
             autocomplete(originInput, buildingsData, originBuildingsListWrapper);
             autocomplete(destinationInput, buildingsData, destinationBuildingsListWrapper);
         })
@@ -101,6 +112,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
 
   // Add a click event listener to the swap button
+  // Swap the input value between two inputs
   swapButton.addEventListener("click", function() {
     // Get the current values of origin and destination inputs
     const originValue = originInput.value;
@@ -134,136 +146,41 @@ document.addEventListener("DOMContentLoaded", function() {
     }, 250); // delay milliseconds
   });
 
-  routeForm.addEventListener("submit", function() {
+  // Check if inputs are valid, and fetch corresponding lat,lng values for org and dst
+  routeForm.addEventListener("submit", function(event) {
+    event.preventDefault();
     errorText.textContent = "";
 
     const origin = originInput.value;
     const destination = destinationInput.value;
 
     if (isValidBuildingName(origin) && isValidBuildingName(destination)) {
-      fetch("/process", {
-        method: "POST",
-        body: JSON.stringify( { origin: origin,
-                                      destination: destination })
-      })
+      fetch(`/coordinates?org=${origin}&dst=${destination}`)
           .then(response => response.json())
           .then(data => {
-            window.location = `submitted?origin=${data.origin}destination=${data.destination}`;
+            window.location.href = `/directions?org=${data.origin}&dst=${data.destination}`;
+          });
 
-          })
-          .catch(error => console.error(error));
+    }
+    else if (!isValidBuildingName(origin) && !isValidBuildingName(destination)) {
+      errorText.textContent = "출발지, 도착지 입력이 올바른지 확인해주세요.";
+    }
+    else if (!isValidBuildingName(origin)) {
+      errorText.textContent = "출발지 입력이 올바른지 확인해주세요.";
+    }
+    else if (!isValidBuildingName(destination)) {
+      errorText.textContent = "도착지 입력이 올바른지 확인해주세요.";
     }
     else {
-      errorText.textContent = "Please check your input again.";
+      errorText.textContent = "입력이 올바른지 확인해주세요.";
     }
-
   });
-
 });
 
-// function validateForm() {
-  // const origin = originInput.value;
-  // const destination = destinationInput.value;
-  //
-  // console.log(origin);
-  // console.log(destination);
-  //
-  // // Verify if the input values are valid building names
-  // if (!isValidBuildingName(origin) || !isValidBuildingName(destination)) {
-  //   // Display an error message if input is invalid
-  //   const output = document.querySelector('#output');
-  //   output.innerHTML = "<div class='alert-danger'>Please enter valid building names.</div>";
-  //   return;
-  // }
-  // else {
-  //   document.getElementById('route-form').submit();
-  // }
-  // // create request
-  // const request = {
-  //   origin: origin,
-  //   destination: destination,
-  //   travelMode: google.maps.TravelMode.WALKING, // available modes: WALKING, DRIVING, BICYCLING, TRANSIT
-  //   unitSystem: google.maps.UnitSystem.METRIC
-  // }
-  //
-  // // pass the request to the route method
-  // directionsService.route(request, (result, status) => {
-  //   if (status === google.maps.DirectionsStatus.OK) {
-  //     // get distance and time
-  //     displayRoute(result);
-  //   } else {
-  //     // Display error message
-  //     handleRouteError();
-  //   }
-  // });
-// }
-
 function isValidBuildingName(buildingName) {
-  console.log(buildingName);
-  console.log(buildingsData);
-  console.log(buildingsData.includes(buildingName));
-
+  // console.log(buildingName);
+  // console.log(buildingsData);
+  // console.log(buildingsData.includes(buildingName));
   return buildingsData.includes(buildingName);
 }
-
-// function displayRoute(result) {
-//   // Display route information on the map
-//   const output = document.querySelector('#output');
-//   output.innerHTML = "<div class='alert-info'> From: " + originInput.value
-//       + " .<br />To: " + destinationInput.value
-//       + " .<br />Walking Distance: " + result.routes[0].legs[0].distance.text
-//       + " .<br />Duration: " + result.routes[0].legs[0].duration.text
-//       + " .</div>";
-//
-//   // Set the map to display the route
-//   directionsDisplay.setDirections(result);
-// }
-
-// function handleRouteError(){
-//   // Display error message
-//   const output = document.querySelector('#output');
-//   output.innerHTML = "<div class='alert-danger'>Could not retrieve walking route.</div>";
-//
-//   // Delete route from map
-//   directionsDisplay.setDirections({ routes: [] });
-//
-//   // Center map back to default
-//   map.setCenter(defaultMapLatLng);
-// }
-
-// document.getElementById('findroute-button').addEventListener('click', () => {
-//   validateForm(); // Call the route calculation function
-// });
-//
-// document.getElementById('route-form').addEventListener('submit', function (e) {
-//   e.preventDefault(); // Prevent the default form submission
-//
-//   const origin = originInput.value;
-//   const destination = destinationInput.value;
-//
-//   // any client-side validation to add?
-//
-//   // Create a JSON object with the form data
-//   const formData = {
-//     origin,
-//     destination,
-//   };
-//
-//   // Make an HTTP POST request
-//   fetch('../app/routes.py', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     body: JSON.stringify(formData),
-//   })
-//     .then((response) => response.json())
-//     .then((data) => {
-//       // Handle the response from your Python backend
-//       console.log(data); // You can update the page or display the response as needed
-//     })
-//     .catch((error) => {
-//       console.error('Error submitting the form:', error);
-//     });
-// });
 
