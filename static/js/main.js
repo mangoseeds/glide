@@ -83,13 +83,6 @@ function autocomplete(input, list, wrapper) {
   }
 }
 
-// Find route using Google API with the given origin and destination and its coordinates
-function findRoute(origin, originCoordinates, destination, destinationCoordinates) {
-  console.log(origin + " = " + originCoordinates);
-  console.log(destination + " = " + destinationCoordinates);
-
-}
-
 document.addEventListener("DOMContentLoaded", function() {
 
   // Fetch the name of buildings and store them in buildingsData
@@ -155,12 +148,41 @@ document.addEventListener("DOMContentLoaded", function() {
     const destination = destinationInput.value;
 
     if (isValidBuildingName(origin) && isValidBuildingName(destination)) {
-      fetch(`/coordinates?org=${origin}&dst=${destination}`)
+      if (origin === destination){
+        errorText.textContent = "출발지와 도착지가 동일합니다.";
+
+      }
+      else {
+        fetch(`/coordinates?org=${origin}&dst=${destination}`)
           .then(response => response.json())
           .then(data => {
-            window.location.href = `/directions?org=${data.origin}&dst=${data.destination}`;
-          });
+            originCoordinates = data['org'];
+            destinationCoordinates = data['dst'];
 
+            // console.log(origin, originCoordinates);
+            // console.log(destination, destinationCoordinates);
+            // console.log(originCoordinates['LATITUDE'])
+
+            // make calls to Google Maps API
+            const request = {
+              origin: { lat: originCoordinates['LATITUDE'], lng: originCoordinates['LONGITUDE'] },
+              destination: { lat: destinationCoordinates['LATITUDE'], lng: destinationCoordinates['LONGITUDE'] },
+              travelMode: google.maps.TravelMode.WALKING, // TWO_WHEELER, DRIVING, BICYCLING, TRANSIT
+              unitSystem: google.maps.UnitSystem.METRIC
+            }
+            directionsService.route(request, function(result,status) {
+              if (status === 'OK') {
+                // get distance and time
+                displayRoute(result);
+                // directionsDisplay.setDirections(result);
+              } else {
+                // Display error message
+                handleRouteError();
+              }
+            });
+            // window.location.href = `/directions?org=${data.origin}&dst=${data.destination}`;
+          });
+      }
     }
     else if (!isValidBuildingName(origin) && !isValidBuildingName(destination)) {
       errorText.textContent = "출발지, 도착지 입력이 올바른지 확인해주세요.";
@@ -176,6 +198,32 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 });
+
+function displayRoute(result) {
+  // Display route information on the map
+  const output = document.querySelector('#output');
+  output.innerHTML = "<div class='alert-info'> From: " + originInput.value
+      + " .<br />To: " + destinationInput.value
+      + " .<br />Walking Distance: " + result.routes[0].legs[0].distance.text
+      + " .<br />Duration: " + result.routes[0].legs[0].duration.text
+      + " .</div>";
+
+  // Set the map to display the route
+  directionsDisplay.setDirections(result);
+}
+
+function handleRouteError(){
+  // Display error message
+  const output = document.querySelector('#output');
+  output.innerHTML = "<div class='alert-danger'>Could not retrieve walking route.</div>";
+
+  // Delete route from map
+  directionsDisplay.setDirections({ routes: [] });
+
+  // Center map back to default
+  map.setCenter(defaultMapLatLng);
+}
+
 
 function isValidBuildingName(buildingName) {
   // console.log(buildingName);

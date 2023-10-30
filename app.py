@@ -36,11 +36,11 @@ def get_coordinates_from_db():
 
     origin_coordinates = ref.child(origin).get()
     dest_coordinates = ref.child(destination).get()
-    print(origin + " = " + str(origin_coordinates))
-    print(destination + " = " + str(dest_coordinates))
+    # print(origin + " = " + str(origin_coordinates))
+    # print(destination + " = " + str(dest_coordinates))
 
-    return jsonify( { "origin": origin_coordinates,
-                      "destination": dest_coordinates })
+    return jsonify( { "org": origin_coordinates,
+                      "dst": dest_coordinates })
 
 # @app.route('/directions', methods=['GET'])
 # def directions():
