@@ -165,6 +165,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // make calls to Google Maps API
             const request = {
+              // origin: { lat: 40.756860488546295, lng: -73.99020362200633 },
+              // destination: { lat: 40.75733840994067, lng: -73.99309638820016 },
               origin: { lat: originCoordinates['LATITUDE'], lng: originCoordinates['LONGITUDE'] },
               destination: { lat: destinationCoordinates['LATITUDE'], lng: destinationCoordinates['LONGITUDE'] },
               travelMode: google.maps.TravelMode.WALKING, // TWO_WHEELER, DRIVING, BICYCLING, TRANSIT
@@ -201,24 +203,26 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function displayRoute(result) {
   // Display route information on the map
-  const output = document.querySelector('#output');
-  output.innerHTML = "<div class='alert-info'> From: " + originInput.value
-      + " .<br />To: " + destinationInput.value
-      + " .<br />Walking Distance: " + result.routes[0].legs[0].distance.text
-      + " .<br />Duration: " + result.routes[0].legs[0].duration.text
-      + " .</div>";
+  // const output = document.querySelector('#output');
+  // output.innerHTML = "<div class='alert-info'> From: " + originInput.value
+  //     + " .<br />To: " + destinationInput.value
+  //     + " .<br />Walking Distance: " + result.routes[0].legs[0].distance.text
+  //     + " .<br />Duration: " + result.routes[0].legs[0].duration.text
+  //     + " .</div>";
+  //
+  // // Set the map to display the route
+  // directionsDisplay.setDirections(result);
 
-  // Set the map to display the route
-  directionsDisplay.setDirections(result);
 }
 
 function handleRouteError(){
   // Display error message
   const output = document.querySelector('#output');
-  output.innerHTML = "<div class='alert-danger'>Could not retrieve walking route.</div>";
+  errorText.textContent = "";
+  errorText.textContent = "길을 찾을 수 없습니다."
 
   // Delete route from map
-  directionsDisplay.setDirections({ routes: [] });
+  // directionsDisplay.setDirections({ routes: [] });
 
   // Center map back to default
   map.setCenter(defaultMapLatLng);
