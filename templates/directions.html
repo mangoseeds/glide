@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,11 +15,16 @@
                 <img src="../static/images/glide-logo.png" id="glide-logo" alt="glide logo image">
             </div>
         </a>
-    <h1>Directions Page</h1>
     
-    <p>Origin: {{ origin }}</p>
-    <p>Destination: {{ destination }}</p>
-    <!-- Display other calculated results -->
+    <p>출발지: {{ origin }}</p>
+    <p>도착지: {{ destination }}</p>
+
     </div>
+
+    <div id="map"></div>
+
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4i1BVl5lkiaP8qTtIc48-ZJ8OJGXwFQc&callback=initMap" async defer></script>
+    <script src="../static/js/main.js"></script>
 </body>
 </html>
