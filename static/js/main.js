@@ -23,6 +23,18 @@ function initMap() {
   mapOptions = {
     center: defaultMapLatLng,
     zoom: 17,
+    minZoom: 17,
+    maxZoom: 19,
+    // draggable: false,
+    gestureHandling: "cooperative",
+    restriction: {
+      latLngBounds: {
+        north:37.568862,
+        south: 37.559228,
+        west: 126.941606,
+        east: 126.950992
+      },
+    },
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
 
