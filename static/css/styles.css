@@ -34,7 +34,7 @@ body {
     height: 100vh;
 }
 
-#map-container {
+#index-map-container {
     position: absolute;
     top: 0;
     left: 0;
@@ -54,7 +54,7 @@ body {
     left: 0;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 23vh;
+    margin-top: 1vh;
     margin-bottom: auto;
 
     display: flex;
@@ -214,7 +214,8 @@ ul {
 
 #swap-button-container {
     position: fixed;
-    top: calc(23vh + 48px);
+    top: calc(20vh + 48px);
+    /*top: 46px;*/
     left: auto;
     right: auto;
 }
@@ -227,7 +228,7 @@ ul {
     border: none;
     border-radius: 50%;
     position: fixed;
-    top: calc(23vh + 48px - 15px);
+    top: calc(22vh + 38px);
     left: 50%;
     /* right: auto; */
 }
@@ -247,15 +248,31 @@ ul {
     }
   }
 
-#output {
+#error-text-container {
+    color: red;
+    left: auto;
+    right: auto;
+    /*margin-left: auto;*/
+    /*margin-right: auto;*/
+    width: 100%;
+    height: 14px;
+    margin-top: 20vh;
+    margin-bottom: auto;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+}
+
+#error-text {
     text-align: center;
-    font-size: 2em;
+    padding: 0;
+    margin: 0;
 }
 
 /*******************************************************************/
 /*******************************************************************/
 /*******************************************************************/
-#map-container{
+#directions-map-container{
     position: relative;
 }
 #map {

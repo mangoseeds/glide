@@ -231,23 +231,8 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 
-function displayRoute(result) {
-  // Display route information on the map
-  // const output = document.querySelector('#output');
-  // output.innerHTML = "<div class='alert-info'> From: " + originInput.value
-  //     + " .<br />To: " + destinationInput.value
-  //     + " .<br />Walking Distance: " + result.routes[0].legs[0].distance.text
-  //     + " .<br />Duration: " + result.routes[0].legs[0].duration.text
-  //     + " .</div>";
-  //
-  // // Set the map to display the route
-  // directionsDisplay.setDirections(result);
-
-}
-
 function handleRouteError(){
   // Display error message
-  const output = document.querySelector('#output');
   errorText.textContent = "";
   errorText.textContent = "길을 찾을 수 없습니다."
 
