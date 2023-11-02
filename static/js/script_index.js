@@ -16,7 +16,7 @@ let buildingsData;
 let originCoordinates;
 let destinationCoordinates;
 
-let defaultMapLatLng = { lat: 37.563434, lng: 126.947945 }; //overall school scope
+let defaultMapLatLng = { lat: 37.563434, lng: 126.947945 };
 let mapOptions;
 
 function initMap() {
@@ -35,17 +35,19 @@ function initMap() {
         east: 126.950992
       },
     },
-    mapTypeId: google.maps.MapTypeId.ROADMAP
+    // mapTypeId: google.maps.MapTypeId.ROADMAP
   };
 
-  map = new google.maps.Map(document.getElementById('map'), mapOptions);
+  map = new google.maps.Map(document.getElementById('map-background'), mapOptions);
+  // backgroundMap = new google.maps.Map(document.getElementById('map-background'), mapOptions);
 
   // create a DirectionsService object to use the route method and get a result for the request
   directionsService = new google.maps.DirectionsService();
   // create a DirectionsRenderer object which will be used to display the routes
   directionsDisplay = new google.maps.DirectionsRenderer();
-
   directionsDisplay.setMap(map);
+  // directionsDisplay.setMap(backgroundMap);
+
 }
 
 // Autocomplete the text input field so that the user can select from a list of buildings
@@ -168,33 +170,49 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch(`/coordinates?org=${origin}&dst=${destination}`)
           .then(response => response.json())
           .then(data => {
-            originCoordinates = data['org'];
-            destinationCoordinates = data['dst'];
+            if (data.origin && data.destination && data.route) {
+              // Redirect to route.html with (origin, destination, route [])
+              const originBuilding = data.origin.building_name;
+              const originLatlng = data.origin.latlng;
+              const destinationBuilding = data.destination.building_name;
+              const destinationLatlng = data.destination.latlng;
+              const route = data.route;
+
+
+              sessionStorage.setItem('originBuilding', originBuilding);
+              sessionStorage.setItem('originLatlng', JSON.stringify(originLatlng));
+              sessionStorage.setItem('destinationBuilding', destinationBuilding);
+              sessionStorage.setItem('destinationLatlng', JSON.stringify(destinationLatlng));
+              sessionStorage.setItem('route', JSON.stringify(route));
+
+              // window.location.href = `/directions?org=${data.org}&dst=${data.dst}&route=${data.route}`;
+              window.location.href = `/directions`;
+            
+            }
+            // originCoordinates = data['org'];
+            // destinationCoordinates = data['dst'];
 
             // console.log(origin, originCoordinates);
             // console.log(destination, destinationCoordinates);
             // console.log(originCoordinates['LATITUDE'])
 
-            // make calls to Google Maps API
-            const request = {
-              // origin: { lat: 40.756860488546295, lng: -73.99020362200633 },
-              // destination: { lat: 40.75733840994067, lng: -73.99309638820016 },
-              origin: { lat: originCoordinates['LATITUDE'], lng: originCoordinates['LONGITUDE'] },
-              destination: { lat: destinationCoordinates['LATITUDE'], lng: destinationCoordinates['LONGITUDE'] },
-              travelMode: google.maps.TravelMode.WALKING, // TWO_WHEELER, DRIVING, BICYCLING, TRANSIT
-              unitSystem: google.maps.UnitSystem.METRIC
-            }
-            directionsService.route(request, function(result,status) {
-              if (status === 'OK') {
-                // get distance and time
-                displayRoute(result);
-                // directionsDisplay.setDirections(result);
-              } else {
-                // Display error message
-                handleRouteError();
-              }
-            });
-            // window.location.href = `/directions?org=${data.origin}&dst=${data.destination}`;
+            // // make calls to Google Maps API
+            // const request = {
+            //   origin: { lat: originCoordinates['LATITUDE'], lng: originCoordinates['LONGITUDE'] },
+            //   destination: { lat: destinationCoordinates['LATITUDE'], lng: destinationCoordinates['LONGITUDE'] },
+            //   travelMode: google.maps.TravelMode.WALKING, // TWO_WHEELER, DRIVING, BICYCLING, TRANSIT
+            //   unitSystem: google.maps.UnitSystem.METRIC
+            // }
+            // directionsService.route(request, function(result,status) {
+            //   if (status === 'OK') {
+            //     // get distance and time
+            //     displayRoute(result);
+            //     // directionsDisplay.setDirections(result);
+            //   } else {
+            //     // Display error message
+            //     handleRouteError();
+            //   }
+            // });
           });
       }
     }
@@ -240,11 +258,9 @@ function handleRouteError(){
   map.setCenter(defaultMapLatLng);
 }
 
-
 function isValidBuildingName(buildingName) {
   // console.log(buildingName);
   // console.log(buildingsData);
   // console.log(buildingsData.includes(buildingName));
   return buildingsData.includes(buildingName);
 }
-

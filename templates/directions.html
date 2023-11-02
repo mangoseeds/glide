@@ -9,7 +9,6 @@
 </head>
 
 <body>
-
     <div id="map-container">
         <div id="map"></div>
         <a href ="./index.html">
@@ -17,12 +16,22 @@
                 <img src="../static/images/glide-logo.png" id="glide-logo" alt="glide logo image">
             </div>
         </a>
-{#        <p>출발지: {{ origin }}</p>#}
-{#        <p>도착지: {{ destination }}</p>#}
     </div>
 
+    <div class="card-view">
+        <div class="text-direction-container">
+            <div class="origin-destination-container">
+                <h2 class="building-name" id="origin-building">출발지: </h2>
+                <h2 class="building-name" id="destination-building">도착지: </h2>
+            </div>
+            <div class="direction-container">
+                <p id="route">route: </p>
+                <p>here goes directions explained in text format</p>
+            </div>
+        </div>
+    </div>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4i1BVl5lkiaP8qTtIc48-ZJ8OJGXwFQc&callback=initMap" async defer></script>
-    <script src="../static/js/main.js"></script>
+    <script src="../static/js/script_directions.js"></script>
 </body>
 </html>
