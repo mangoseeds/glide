@@ -6,11 +6,11 @@ let directionsDisplay;
 const cardView = document.getElementById('card-view');
 const mapContainer = document.getElementById('map-container');
 
-const originBuilding = sessionStorage.getItem('originBuilding');
-const originLatlng = JSON.parse(sessionStorage.getItem('originLatlng'));
-const destinationBuilding = sessionStorage.getItem('destinationBuilding');
-const destinationLatlng = JSON.parse(sessionStorage.getItem('destinationLatlng'));
-const route = JSON.parse(sessionStorage.getItem('route'));
+// const originBuilding = sessionStorage.getItem('originBuilding');
+// const originLatlng = JSON.parse(sessionStorage.getItem('originLatlng'));
+// const destinationBuilding = sessionStorage.getItem('destinationBuilding');
+// const destinationLatlng = JSON.parse(sessionStorage.getItem('destinationLatlng'));
+// const route = JSON.parse(sessionStorage.getItem('route'));
 
 function initMap() {
   mapOptions = {
@@ -58,6 +58,6 @@ cardView.addEventListener('click', () => {
 });
 
 // Update the HTML content
-document.getElementById('origin-building').textContent += originBuilding;
-document.getElementById('destination-building').textContent += destinationBuilding;
-document.getElementById('route').textContent += JSON.stringify(route);
+// document.getElementById('origin-building').textContent += originBuilding;
+// document.getElementById('destination-building').textContent += destinationBuilding;
+// document.getElementById('route').textContent += JSON.stringify(route);

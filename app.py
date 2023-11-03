@@ -30,6 +30,7 @@ def directions():
     org = request.args.get('org')
     dst = request.args.get('dst')
     route = request.args.get('route')
+    print(org, dst, route)
     return render_template('directions.html', org=org, dst=dst, route=route)
 
 @app.route('/get_buildings', methods=['GET'])
