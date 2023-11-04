@@ -48,7 +48,7 @@ let isCardViewExpanded = false;
 cardView.addEventListener('click', () => {
   if (isCardViewExpanded) {
         // If the card view is already expanded, collapse it
-        cardView.style.height = '30%';
+        cardView.style.height = '10%';
     } else {
         // If the card view is collapsed, expand it
         cardView.style.height = '80%';
