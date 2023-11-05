@@ -44,6 +44,11 @@ function initMap() {
 }
 
 let isCardViewExpanded = false;
+const routeText = document.getElementById('route-text');
+
+function generateTextDirections() {
+  return "here goes generated text description of the route";
+}
 
 cardView.addEventListener('click', () => {
   if (isCardViewExpanded) {
@@ -54,7 +59,7 @@ cardView.addEventListener('click', () => {
         cardView.style.height = '80%';
     }
     isCardViewExpanded = !isCardViewExpanded;
-    // update the text?
+    routeText.textContent = generateTextDirections();
 });
 
 // Update the HTML content
