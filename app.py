@@ -16,7 +16,11 @@ firebase_admin.initialize_app(cred, {
 })
 
 ref = db.reference('buildings')
-# ref.update({'test': '99999'})
+
+##### database structure #####
+##### buildings > BUILDING NAME > coordinates   > LATITUDE:
+#####                                           > LONGITUDE:
+#####                           > other buildings
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
