@@ -67,6 +67,28 @@ def get_coordinates_from_db():
 
     return jsonify(data)
 
+@app.route('/get_directions', methods=['GET'])
+def get_directions_from_db():
+    origin_building = request.args.get('org')
+    destination_building = request.args.get('dst')
+
+    origin_latlng = ref.child(origin_building).get()
+    dest_latlng = ref.child(destination_building).get()
+    route = []
+    data = {
+        "origin": {
+            "building_name": origin_building,
+            "latlng": origin_latlng
+        },
+        "destination": {
+            "building_name": destination_building,
+            "latlng": dest_latlng
+        },
+        "route": route
+    }
+
+    return jsonify(data)
+
 
 if __name__ == '__main__':
         app.run(debug=True)
