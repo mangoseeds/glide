@@ -35,6 +35,12 @@ function initMap() {
         east: 126.950992
       },
     },
+    elementType: "geometry",
+    stylers: [
+      {
+        "color": "#f5f5f5"
+      }
+    ]
     // mapTypeId: google.maps.MapTypeId.ROADMAP
   };
 
