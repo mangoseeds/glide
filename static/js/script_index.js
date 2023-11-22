@@ -8,53 +8,7 @@ const swapButton = document.getElementById("swap-button");
 const routeForm = document.getElementById('route-form');
 const errorText = document.getElementById('error-text');
 
-let map;
-let directionsService;
-let directionsDisplay;
 let buildingsData;
-
-let originCoordinates;
-let destinationCoordinates;
-
-let defaultMapLatLng = { lat: 37.563434, lng: 126.947945 };
-let mapOptions;
-
-function initMap() {
-  mapOptions = {
-    center: defaultMapLatLng,
-    zoom: 17,
-    minZoom: 17,
-    maxZoom: 19,
-    // draggable: false,
-    gestureHandling: "cooperative",
-    restriction: {
-      latLngBounds: {
-        north:37.568862,
-        south: 37.559228,
-        west: 126.941606,
-        east: 126.950992
-      },
-    },
-    elementType: "geometry",
-    stylers: [
-      {
-        "color": "#f5f5f5"
-      }
-    ]
-    // mapTypeId: google.maps.MapTypeId.ROADMAP
-  };
-
-  map = new google.maps.Map(document.getElementById('map-background'), mapOptions);
-  // backgroundMap = new google.maps.Map(document.getElementById('map-background'), mapOptions);
-
-  // create a DirectionsService object to use the route method and get a result for the request
-  directionsService = new google.maps.DirectionsService();
-  // create a DirectionsRenderer object which will be used to display the routes
-  directionsDisplay = new google.maps.DirectionsRenderer();
-  directionsDisplay.setMap(map);
-  // directionsDisplay.setMap(backgroundMap);
-
-}
 
 // Autocomplete the text input field so that the user can select from a list of buildings
 function autocomplete(input, list, wrapper) {
@@ -73,6 +27,7 @@ function autocomplete(input, list, wrapper) {
 
     // Set the position of the suggestions box
     const rect = input.getBoundingClientRect();
+    suggestions.style.position = 'absolute';
     suggestions.style.left = rect.left + 'px';
     suggestions.style.top = rect.bottom + 'px';
 
@@ -101,6 +56,27 @@ function autocomplete(input, list, wrapper) {
     const suggestions = document.getElementById(wrapper.id + "-suggestions");
     if (suggestions) suggestions.parentNode.removeChild(suggestions);
   }
+
+  // Keep suggestions box relative to text input even when window is resized
+  function updateSuggestionsPosition() {
+    const rect = input.getBoundingClientRect();
+    const suggestions = document.getElementById(wrapper.id + "-suggestions");
+    if (suggestions) {
+      suggestions.style.left = rect.left + 'px';
+      suggestions.style.top = rect.bottom + 'px';
+    }
+  }
+
+  // Event listener for input changes
+  input.addEventListener('input', function () {
+    // ... (Your existing code)
+    updateSuggestionsPosition();
+  });
+
+  // Event listener for window resize
+  window.addEventListener('resize', function () {
+    updateSuggestionsPosition();
+  });
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -176,49 +152,33 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch(`/coordinates?org=${origin}&dst=${destination}`)
           .then(response => response.json())
           .then(data => {
-            if (data.origin && data.destination && data.route) {
+            if (data.origin && data.destination) {
               // Redirect to route.html with (origin, destination, route [])
               const originBuilding = data.origin.building_name;
-              const originLatlng = data.origin.latlng;
+              const originLatLng = data.origin.latlng;
               const destinationBuilding = data.destination.building_name;
-              const destinationLatlng = data.destination.latlng;
-              const route = data.route;
+              const destinationLatLng = data.destination.latlng;
+              console.log(originBuilding);
+              console.log(originLatLng);
+              console.log(destinationBuilding);
+              console.log(destinationLatLng);
 
-
+              // use session storage to store values then redirect to a new page
               sessionStorage.setItem('originBuilding', originBuilding);
-              sessionStorage.setItem('originLatlng', JSON.stringify(originLatlng));
+              sessionStorage.setItem('originLat', JSON.stringify(originLatLng["LATITUDE"]));
+              sessionStorage.setItem('originLng', JSON.stringify(originLatLng["LONGITUDE"]));
               sessionStorage.setItem('destinationBuilding', destinationBuilding);
-              sessionStorage.setItem('destinationLatlng', JSON.stringify(destinationLatlng));
-              sessionStorage.setItem('route', JSON.stringify(route));
+              sessionStorage.setItem('destinationLat', JSON.stringify(destinationLatLng["LATITUDE"]));
+              sessionStorage.setItem('destinationLng', JSON.stringify(destinationLatLng["LONGITUDE"]));
 
-              // window.location.href = `/directions?org=${data.org}&dst=${data.dst}&route=${data.route}`;
+              // if (data.route) {
+              //   const route = data.route;
+              //   sessionStorage.setItem('route', JSON.stringify(route));
+              // }
+
               window.location.href = `/directions`;
             
             }
-            // originCoordinates = data['org'];
-            // destinationCoordinates = data['dst'];
-
-            // console.log(origin, originCoordinates);
-            // console.log(destination, destinationCoordinates);
-            // console.log(originCoordinates['LATITUDE'])
-
-            // // make calls to Google Maps API
-            // const request = {
-            //   origin: { lat: originCoordinates['LATITUDE'], lng: originCoordinates['LONGITUDE'] },
-            //   destination: { lat: destinationCoordinates['LATITUDE'], lng: destinationCoordinates['LONGITUDE'] },
-            //   travelMode: google.maps.TravelMode.WALKING, // TWO_WHEELER, DRIVING, BICYCLING, TRANSIT
-            //   unitSystem: google.maps.UnitSystem.METRIC
-            // }
-            // directionsService.route(request, function(result,status) {
-            //   if (status === 'OK') {
-            //     // get distance and time
-            //     displayRoute(result);
-            //     // directionsDisplay.setDirections(result);
-            //   } else {
-            //     // Display error message
-            //     handleRouteError();
-            //   }
-            // });
           });
       }
     }
@@ -241,17 +201,8 @@ function handleRouteError(){
   // Display error message
   errorText.textContent = "";
   errorText.textContent = "길을 찾을 수 없습니다."
-
-  // Delete route from map
-  // directionsDisplay.setDirections({ routes: [] });
-
-  // Center map back to default
-  map.setCenter(defaultMapLatLng);
 }
 
 function isValidBuildingName(buildingName) {
-  // console.log(buildingName);
-  // console.log(buildingsData);
-  // console.log(buildingsData.includes(buildingName));
   return buildingsData.includes(buildingName);
 }

@@ -44,11 +44,6 @@ body {
     background-color: rgba(255,255,255,0.7);
 }
 
-#map-background {
-    height: 100%;
-    width: 100%;
-}
-
 #inputs-container {
     top: 0;
     left: 0;
@@ -163,13 +158,13 @@ input[type="text"] {
 }
 
 .buildings-list-wrapper{
-    position: fixed;
-    width: 117px;
-    overflow-y: scroll;
-    overflow-x: auto;
+    position: absolute;
+    width: 133px;
+    overflow-y: auto;
+    overflow-x: hidden;
     background-color: var(--blossom);
-    min-height: 0px;
-    max-height: 100px;
+    min-height: 0;
+    max-height: 150px;
     border-radius: 10px;
     padding: 0;
 }
@@ -177,13 +172,13 @@ input[type="text"] {
 #origin-buildings-list-wrapper,
 #destination-buildings-list-wrapper {
     display: none;
-    position: absolute;
-    width: 117px;
+    position: fixed;
+    width: 107px;
     background-color: var(--blossom);
     z-index: 9999; /* Position in front of other elements */
-    max-height: 120px; /* Adjust the maximum height as needed */
-    overflow-y: auto; /* Enable scrolling if needed */
-    min-height: 0px;
+    max-height: 120px;
+    overflow-y: auto;
+    min-height: 0;
 }
 
 ul {
@@ -194,6 +189,7 @@ ul {
 .buildings-list {
     list-style-type: none;
     padding: 5px;
+    width: 107px;
 }
 
 /* .buildings-list li {
@@ -205,7 +201,7 @@ ul {
 
 .buildings-list :last-child {
     cursor: pointer;
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 .buildings-list li:hover {
@@ -276,10 +272,14 @@ ul {
 #directions-map-container{
     position: relative;
 }
-#map {
+#index-map-container {
     z-index: 0;
     height: 100%;
     width: 100%;
+    background-image: url('../images/map.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 #card-view {

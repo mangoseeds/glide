@@ -33,9 +33,9 @@ def index():
 def directions():
     org = request.args.get('org')
     dst = request.args.get('dst')
-    route = request.args.get('route')
-    print(org, dst, route)
-    return render_template('directions.html', org=org, dst=dst, route=route)
+    # route = request.args.get('route')
+    # add route when reconfiguring database and route field
+    return render_template('directions.html')
 
 @app.route('/get_buildings', methods=['GET'])
 def get_buildings():
@@ -51,7 +51,6 @@ def get_coordinates_from_db():
 
     origin_latlng = ref.child(origin_building).get()
     dest_latlng = ref.child(destination_building).get()
-    route = []
 
     data = {
         "origin": {
@@ -61,34 +60,32 @@ def get_coordinates_from_db():
         "destination": {
             "building_name": destination_building,
             "latlng": dest_latlng
-        },
-        "route": route
+        }
     }
 
     return jsonify(data)
 
-@app.route('/get_directions', methods=['GET'])
-def get_directions_from_db():
-    origin_building = request.args.get('org')
-    destination_building = request.args.get('dst')
-
-    origin_latlng = ref.child(origin_building).get()
-    dest_latlng = ref.child(destination_building).get()
-    route = []
-    data = {
-        "origin": {
-            "building_name": origin_building,
-            "latlng": origin_latlng
-        },
-        "destination": {
-            "building_name": destination_building,
-            "latlng": dest_latlng
-        },
-        "route": route
-    }
-
-    return jsonify(data)
-
+# @app.route('/get_directions', methods=['GET'])
+# def get_directions_from_db():
+#     origin_building = request.args.get('org')
+#     destination_building = request.args.get('dst')
+#
+#     origin_latlng = ref.child(origin_building).get()
+#     dest_latlng = ref.child(destination_building).get()
+#     route = []
+#     data = {
+#         "origin": {
+#             "building_name": origin_building,
+#             "latlng": origin_latlng
+#         },
+#         "destination": {
+#             "building_name": destination_building,
+#             "latlng": dest_latlng
+#         },
+#         "route": route
+#     }
+#
+#     return jsonify(data)
 
 if __name__ == '__main__':
         app.run(debug=True)
