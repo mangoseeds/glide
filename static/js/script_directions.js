@@ -41,49 +41,75 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function initMap(originLat, originLng, destinationLat, destinationLng) {
-  // mapOptions = {
-  //   center: new Tmapv2.LatLng(37.563434, 126.947945),
-  //   width: "500px",
-  //   height: "500px",
-  //   zoom: 17,
-  // minZoom: 17,
-  // maxZoom: 19,
-  // // draggable: false,
-  // gestureHandling: "cooperative",
-  // restriction: {
-  //   latLngBounds: {
-  //     north:37.568862,
-  //     south: 37.559228,
-  //     west: 126.941606,
-  //     east: 126.950992
-  //   },
-  // },
-  // elementType: "geometry",
-  // stylers: [
-  //   {
-  //     "color": "#f5f5f5"
-  //   }
-  // ]
-  // };
+    function callDirectionsService(orgLat, orgLng, destLat, destLng) {
+        var prtcl;
+        var headers = {};
+        headers["appKey"]="발급appKey";
+        $.ajax({
+                method:"POST",
+                headers : headers,
+                url:"https://apis.openapi.sk.com/tmap/routes?version=1&format=json",//
+                async:false,
+                data:{
+                    startX : orgLat,
+                    startY : orgLng,
+                    endX : destLat,
+                    endY : destLng,
+                    passList : orgLat + "," + orgLng + "_" + destLat + "," + destLng,
+                    reqCoordType : "WGS84GEO",
+                    resCoordType : "WGS84GEO",
+                    angle : "172",
+                    searchOption : "0",
+                    trafficInfo : "N"
+                },
+                success:function(response){
+                prtcl = response;
+                },
+                error:function(request,status,error){
+                console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+            }
+        });
+    }
 
-  // get user's screen size
-  let SCREEN_SIZE = {
-    width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
-    height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
-  };
-  // console.log(SCREEN_SIZE.width,SCREEN_SIZE.height)
-
-  let map = new window.Tmapv2.Map(document.getElementById("map_div"),
-      {
+    // get user's screen size
+    let SCREEN_SIZE = {
+        width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
+        height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+    };
+    let map = new window.Tmapv2.Map(document.getElementById("map_div"), {
         center: new Tmapv2.LatLng(originLat, originLng),
         width: SCREEN_SIZE.width + "px",
         height: SCREEN_SIZE.height + "px",
+        draggableSys: "true",
+        draggable: "true",
+        scrollwheel: "false",
+        zoomControl: "false",
+        measureControl: "true",
+        scaleBar: "true",
         zoom: 17,
-      });
+    });
+
+    // create marker on origin and destination buildings
+    const markerOrigin = new Tmapv2.Marker({
+        position: new Tmapv2.LatLng(originLat, originLng), //Marker의 중심좌표 설정.
+        label: "출발",
+        //  iconHTML {String}(html text) html Text를 사용하는 마커의 아이콘
+        map: map //Marker가 표시될 Map 설정.
+    });
+    //Marker 객체 생성.
+    const markerDestination = new Tmapv2.Marker({
+        position: new Tmapv2.LatLng(destinationLat, destinationLng), //Marker의 중심좌표 설정.
+        label: "도착",
+        map: map //Marker가 표시될 Map 설정.
+    });
+
+    callDirectionsService(originLat, originLng, destinationLat, destinationLng);
 }
 
-// function generateTextDirections() {
-//   return "here goes generated text description of the route";
-// }
+
+
+function generateTextDirections() {
+  return "here goes generated text description of the route";
+}
 
 
