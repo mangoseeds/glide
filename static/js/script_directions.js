@@ -6,11 +6,11 @@ let directionsDisplay;
 const cardView = document.getElementById('card-view');
 const mapContainer = document.getElementById('map-container');
 
-const originBuilding = sessionStorage.getItem('originBuilding');
-const originLatlng = JSON.parse(sessionStorage.getItem('originLatlng'));
-const destinationBuilding = sessionStorage.getItem('destinationBuilding');
-const destinationLatlng = JSON.parse(sessionStorage.getItem('destinationLatlng'));
-const route = JSON.parse(sessionStorage.getItem('route'));
+// const originBuilding = sessionStorage.getItem('originBuilding');
+// const originLatlng = JSON.parse(sessionStorage.getItem('originLatlng'));
+// const destinationBuilding = sessionStorage.getItem('destinationBuilding');
+// const destinationLatlng = JSON.parse(sessionStorage.getItem('destinationLatlng'));
+// const route = JSON.parse(sessionStorage.getItem('route'));
 
 function initMap() {
   mapOptions = {
@@ -44,20 +44,25 @@ function initMap() {
 }
 
 let isCardViewExpanded = false;
+const routeText = document.getElementById('route-text');
+
+function generateTextDirections() {
+  return "here goes generated text description of the route";
+}
 
 cardView.addEventListener('click', () => {
   if (isCardViewExpanded) {
         // If the card view is already expanded, collapse it
-        cardView.style.height = '30%';
+        cardView.style.height = '10%';
     } else {
         // If the card view is collapsed, expand it
         cardView.style.height = '80%';
     }
     isCardViewExpanded = !isCardViewExpanded;
-    // update the text?
+    routeText.textContent = generateTextDirections();
 });
 
 // Update the HTML content
-document.getElementById('origin-building').textContent += originBuilding;
-document.getElementById('destination-building').textContent += destinationBuilding;
-document.getElementById('route').textContent += JSON.stringify(route);
+// document.getElementById('origin-building').textContent += originBuilding;
+// document.getElementById('destination-building').textContent += destinationBuilding;
+// document.getElementById('route').textContent += JSON.stringify(route);

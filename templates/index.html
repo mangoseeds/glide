@@ -10,12 +10,16 @@
 
 <body>
 
-  <div id="map-container">
+  <div id="index-map-container">
     <a href ="./index.html">
       <div id="logo">
         <img src="../static/images/glide-logo.png" id="glide-logo" alt="glide logo image">
       </div>
     </a>
+
+      <div id="error-text-container">
+        <p id="error-text"></p>
+      </div>
 
     <form id="route-form" onsubmit="return false;" method="GET">
       <div id="inputs-container">
@@ -48,10 +52,7 @@
 
   </div>
 
-  <p id="error-text" style="color: red;"></p>
-
   <div id="map-background"></div>
-  <div id="output"></div>
 
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4i1BVl5lkiaP8qTtIc48-ZJ8OJGXwFQc&callback=initMap" async defer></script>
   <script src="../static/js/script_index.js"></script>

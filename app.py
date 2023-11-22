@@ -16,7 +16,11 @@ firebase_admin.initialize_app(cred, {
 })
 
 ref = db.reference('buildings')
-# ref.update({'test': '99999'})
+
+##### database structure #####
+##### buildings > BUILDING NAME > coordinates   > LATITUDE:
+#####                                           > LONGITUDE:
+#####                           > other buildings
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -30,6 +34,7 @@ def directions():
     org = request.args.get('org')
     dst = request.args.get('dst')
     route = request.args.get('route')
+    print(org, dst, route)
     return render_template('directions.html', org=org, dst=dst, route=route)
 
 @app.route('/get_buildings', methods=['GET'])
@@ -48,6 +53,28 @@ def get_coordinates_from_db():
     dest_latlng = ref.child(destination_building).get()
     route = []
 
+    data = {
+        "origin": {
+            "building_name": origin_building,
+            "latlng": origin_latlng
+        },
+        "destination": {
+            "building_name": destination_building,
+            "latlng": dest_latlng
+        },
+        "route": route
+    }
+
+    return jsonify(data)
+
+@app.route('/get_directions', methods=['GET'])
+def get_directions_from_db():
+    origin_building = request.args.get('org')
+    destination_building = request.args.get('dst')
+
+    origin_latlng = ref.child(origin_building).get()
+    dest_latlng = ref.child(destination_building).get()
+    route = []
     data = {
         "origin": {
             "building_name": origin_building,
