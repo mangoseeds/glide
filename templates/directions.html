@@ -10,7 +10,7 @@
 
 <body>
     <div id="directions-map-container">
-        <div id="map"></div>
+        <div id="map_div"></div>
         <a href ="./index.html">
             <div id="logo">
                 <img src="../static/images/glide-logo.png" id="glide-logo" alt="glide logo image">
@@ -25,12 +25,14 @@
                 <h2 class="building-name" id="destination-building">도착지: </h2>
             </div>
             <div class="direction-container">
-                <p id="route-text">route: </p>
+                <p id="route-result">route: </p>
+                <p id="route-description">route: </p>
             </div>
         </div>
     </div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4i1BVl5lkiaP8qTtIc48-ZJ8OJGXwFQc&callback=initMap" async defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=Uwozp3NT3vLq8QjIzTgLaKFTjJyC86y5YavUs4y9"></script>
     <script src="../static/js/script_directions.js"></script>
 </body>
 </html>
