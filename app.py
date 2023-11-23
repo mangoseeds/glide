@@ -17,11 +17,6 @@ firebase_admin.initialize_app(cred, {
 
 ref = db.reference('buildings')
 
-##### database structure #####
-##### buildings > BUILDING NAME > coordinates   > LATITUDE:
-#####                                           > LONGITUDE:
-#####                           > other buildings
-
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 
@@ -44,22 +39,51 @@ def get_buildings():
     # print(jsonify(building_names))
     return jsonify(building_names)
 
+@app.route('/entrance', methods=['GET'])
+def get_entrance_coordinates_from_db():
+    entrance_list = []
+
+    buildings = ref.get()
+    for building_name, building_data in buildings.item():
+        entrances = building_data.get("entrance", {})
+        coordinates = [entrances[key] for key in entrances]
+        entrance_list[building_name] = coordinates
+    return jsonify(entrance_list)
+
 @app.route('/coordinates', methods=['GET'])
 def get_coordinates_from_db():
     origin_building = request.args.get('org')
     destination_building = request.args.get('dst')
 
     origin_latlng = ref.child(origin_building).get()
-    dest_latlng = ref.child(destination_building).get()
+    destination_latlng = ref.child(destination_building).get()
+
+    #### data example
+    # {'latlng': '(37.5602290, 126.9457357)'}
+    # {'latlng': '(37.5602290, 126.9457357)'}
+    ####
+    olatlng = origin_latlng['latlng']
+    olatlng = olatlng[1:-1].split(", ")
+
+    dlatlng = destination_latlng['latlng']
+    dlatlng = dlatlng[1:-1].split(", ")
+
+    # print(olatlng)
+    # print(origin_latlng)
+    # print({'LATITUDE': olatlng[0], 'LONGITUDE': olatlng[1]})
+
+    ### should be
+    # {'LATITUDE': 37.56247, 'LONGITUDE': 126.937626}
+    # {'LATITUDE': 37.561318, 'LONGITUDE': 126.938262}
 
     data = {
         "origin": {
             "building_name": origin_building,
-            "latlng": origin_latlng
+            "latlng": {'LATITUDE': olatlng[0], 'LONGITUDE': olatlng[1]}
         },
         "destination": {
             "building_name": destination_building,
-            "latlng": dest_latlng
+            "latlng": {'LATITUDE': dlatlng[0], 'LONGITUDE': dlatlng[1]}
         }
     }
 
@@ -86,6 +110,9 @@ def get_coordinates_from_db():
 #     }
 #
 #     return jsonify(data)
+
+
+#ref = db.reference('buildings')
 
 if __name__ == '__main__':
         app.run(debug=True)
