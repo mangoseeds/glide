@@ -1,3 +1,5 @@
+import collections
+
 from flask import Flask,render_template, request, jsonify
 import pyrebase
 import sys
@@ -16,6 +18,21 @@ firebase_admin.initialize_app(cred, {
 })
 
 ref = db.reference('buildings')
+
+
+entrance_list = []
+
+buildings = ref.get()
+print(buildings)
+for b in buildings.keys():
+    entrances = buildings[b].get("entrance", {})
+    print(entrances)
+    for value in entrances.values():
+        coordinates = value.split(' / ')
+        for coord in coordinates:
+            entrance_list.append(coord)
+
+# print(entrance_list)
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -39,16 +56,16 @@ def get_buildings():
     # print(jsonify(building_names))
     return jsonify(building_names)
 
-@app.route('/entrance', methods=['GET'])
-def get_entrance_coordinates_from_db():
-    entrance_list = []
-
-    buildings = ref.get()
-    for building_name, building_data in buildings.item():
-        entrances = building_data.get("entrance", {})
-        coordinates = [entrances[key] for key in entrances]
-        entrance_list[building_name] = coordinates
-    return jsonify(entrance_list)
+# @app.route('/entrance', methods=['GET'])
+# def get_entrance_coordinates_from_db():
+#     entrance_list = []
+#
+#     buildings = ref.get()
+#     for building_name, building_data in buildings.item():
+#         entrances = building_data.get("entrance", {})
+#         coordinates = [entrances[key] for key in entrances]
+#         entrance_list[building_name] = coordinates
+#     return jsonify(entrance_list)
 
 @app.route('/coordinates', methods=['GET'])
 def get_coordinates_from_db():

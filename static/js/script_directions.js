@@ -40,36 +40,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
+function setAccessibleEntrance(map) {
+
+
+
+    markerOrigin = new Tmapv2.Marker({
+        position: new Tmapv2.LatLng(originLat, originLng), //Marker의 중심좌표 설정.
+        label: originBuilding,
+        icon: "/static/images/icons8-map-pin-48.png",
+        iconSize: new Tmapv2.Size(42, 38),
+        map: map //Marker가 표시될 Map 설정.
+    });
+}
+
 function initMap(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng) {
-    // function callDirectionsService(orgLat, orgLng, destLat, destLng) {
-    //     var prtcl;
-    //     var headers = {};
-    //     headers["appKey"]="https://apis.openapi.sk.com/tmap/routes?version=1&format=json";
-    //     $.ajax({
-    //             method:"POST",
-    //             headers : headers,
-    //             url:"https://apis.openapi.sk.com/tmap/routes?version=1&format=json",
-    //             async:false,
-    //             data:{
-    //                 startX : orgLat,
-    //                 startY : orgLng,
-    //                 endX : destLat,
-    //                 endY : destLng,
-    //                 passList : orgLat + "," + orgLng + "_" + destLat + "," + destLng,
-    //                 reqCoordType : "WGS84GEO",
-    //                 resCoordType : "WGS84GEO",
-    //                 angle : "172",
-    //                 searchOption : "0",
-    //                 trafficInfo : "N"
-    //             },
-    //             success:function(response){
-    //             prtcl = response;
-    //             },
-    //             error:function(request,status,error){
-    //             console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-    //         }
-    //     });
-    // }
 
     // get user's screen size
     let SCREEN_SIZE = {
@@ -89,6 +73,8 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         scaleBar: "true",
         zoom: 17,
     });
+    
+    setAccessibleEntrance(map);
 
     // create marker on origin and destination buildings
     markerOrigin = new Tmapv2.Marker({
