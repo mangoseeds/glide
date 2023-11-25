@@ -23,16 +23,14 @@ ref = db.reference('buildings')
 entrance_list = []
 
 buildings = ref.get()
-print(buildings)
 for b in buildings.keys():
     entrances = buildings[b].get("entrance", {})
-    print(entrances)
     for value in entrances.values():
         coordinates = value.split(' / ')
         for coord in coordinates:
             entrance_list.append(coord)
 
-# print(entrance_list)
+print(entrance_list)
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
