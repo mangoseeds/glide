@@ -4,54 +4,54 @@ const cardView = document.getElementById('card-view');
 const mapContainer = document.getElementById('map_div');
 let isCardViewExpanded = false;
 const routeText = document.getElementById('route-text');
-
-let resultdrawArr = [];
+let resultDrawArr = [];
 let drawInfoArr = [];
-document.addEventListener("DOMContentLoaded", function () {
 
-    // retrieve items from session storage
-    const originBuilding = sessionStorage.getItem('originBuilding');
-    const originLat = sessionStorage.getItem('originLat');
-    const originLng = sessionStorage.getItem('originLng');
-    const destinationBuilding = sessionStorage.getItem('destinationBuilding');
-    const destinationLat = sessionStorage.getItem('destinationLat');
-    const destinationLng = sessionStorage.getItem('destinationLng');
-    // const route = JSON.parse(sessionStorage.getItem('route'));
+function addAccessibleEntrance(map) {
 
-    // reconfigure when adding route functionality
-    initMap(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
-
-    // Update the HTML content
-    document.getElementById('origin-building').textContent += originBuilding;
-    document.getElementById('destination-building').textContent += destinationBuilding;
-    // document.getElementById('route').textContent += JSON.stringify(route);
-
-    cardView.addEventListener('click', () => {
-      if (isCardViewExpanded) {
-            // If the card view is already expanded, collapse it
-            cardView.style.height = '10%';
-        } else {
-            // If the card view is collapsed, expand it
-            cardView.style.height = '80%';
-        }
-        isCardViewExpanded = !isCardViewExpanded;
-        // routeText.textContent = generateTextDirections();
-    });
-
-});
-
-function setAccessibleEntrance(map) {
-
-
-
-    markerOrigin = new Tmapv2.Marker({
+    function setAccessibleEntranceMarker() {
+        markerOrigin = new Tmapv2.Marker({
         position: new Tmapv2.LatLng(originLat, originLng), //Marker의 중심좌표 설정.
         label: originBuilding,
-        icon: "/static/images/icons8-map-pin-48.png",
-        iconSize: new Tmapv2.Size(42, 38),
+        icon: "/static/images/icons8-assistive-technology-48.png",
+        iconSize: new Tmapv2.Size(28, 28),
         map: map //Marker가 표시될 Map 설정.
     });
+    }
+
+    // Fetch the name of buildings and store them in buildingsData
+      fetch("/get_accessible_entrance_coordinates")
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Failed to fetch data from /get_accessible_entrance_coordinates");
+                }
+            })
+            .then(responseData => {
+                entrancesCoordinates = responseData;
+                // attach autocomplete function to the two inputs
+                console.log(entrancesCoordinates);
+
+                // setAccessibleEntranceMarker()
+            })
+            .catch(error => {
+                console.error("Error fetching accessible entrance coordinates list: ", error);
+            });
+
 }
+
+function drawLine(arrPoint) {
+		var polyline_;
+
+		polyline_ = new Tmapv2.Polyline({
+			path : arrPoint,
+			strokeColor : "#F27367",
+			strokeWeight : 6,
+			map : map
+		});
+		resultDrawArr.push(polyline_);
+	}
 
 function initMap(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng) {
 
@@ -74,7 +74,7 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         zoom: 17,
     });
     
-    setAccessibleEntrance(map);
+    // addAccessibleEntrance(map);
 
     // create marker on origin and destination buildings
     markerOrigin = new Tmapv2.Marker({
@@ -93,10 +93,29 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         map: map //Marker가 표시될 Map 설정.
     });
 
+    console.log("###########");
+    console.log(originBuilding);
+    console.log(originLat);
+    console.log(originLng);
+    console.log(destinationBuilding);
+    console.log(destinationLat);
+    console.log(destinationLng);
+    // api call to get walking directions
+    callWalkingDirections(map, originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
+
+}
+
+function callWalkingDirections(map, originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng) {
     // Call API for walking directions
     var headers = {};
     headers["appKey"]="Uwozp3NT3vLq8QjIzTgLaKFTjJyC86y5YavUs4y9";
 
+    // console.log(originBuilding);
+    // console.log(originLat);
+    // console.log(originLng);
+    // console.log(destinationBuilding);
+    // console.log(destinationLat);
+    // console.log(destinationLng);
 
     $.ajax({
             method : "POST",
@@ -111,7 +130,7 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
                 "reqCoordType" : "WGS84GEO",
                 "resCoordType" : "EPSG3857",
                 "startName" : originBuilding,
-                "endName" : destinationBuilding
+                "endName" : destinationBuilding,
             },
             success : function(response) {
                 var resultData = response.features;
@@ -127,11 +146,11 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
                 $("#route-result").text(tDistance + tTime);
 
                 //기존 그려진 라인 & 마커가 있다면 초기화
-                if (resultdrawArr.length > 0) {
-                    for (var i in resultdrawArr) {
-                        resultdrawArr[i].setMap(null);
+                if (resultDrawArr.length > 0) {
+                    for (var i in resultDrawArr) {
+                        resultDrawArr[i].setMap(null);
                     }
-                    resultdrawArr = [];
+                    resultDrawArr = [];
                 }
 
                 drawInfoArr = [];
@@ -211,19 +230,46 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         });
 }
 
-function drawLine(arrPoint) {
-		var polyline_;
-
-		polyline_ = new Tmapv2.Polyline({
-			path : arrPoint,
-			strokeColor : "#F27367",
-			strokeWeight : 6,
-			map : map
-		});
-		resultdrawArr.push(polyline_);
-	}
-
 function generateTextDirections() {
   return "here goes generated text description of the route";
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    // retrieve items from session storage
+    const originBuilding = sessionStorage.getItem('originBuilding');
+    const originLat = sessionStorage.getItem('originLat');
+    const originLng = sessionStorage.getItem('originLng');
+    const destinationBuilding = sessionStorage.getItem('destinationBuilding');
+    const destinationLat = sessionStorage.getItem('destinationLat');
+    const destinationLng = sessionStorage.getItem('destinationLng');
+    // const route = JSON.parse(sessionStorage.getItem('route'));
+
+    // console.log(originBuilding);
+    // console.log(originLat);
+    // console.log(originLng);
+    // console.log(destinationBuilding);
+    // console.log(destinationLat);
+    // console.log(destinationLng);
+
+    // reconfigure when adding route functionality
+    initMap(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
+
+    // Update the HTML content
+    document.getElementById('origin-building').textContent += originBuilding;
+    document.getElementById('destination-building').textContent += destinationBuilding;
+    // document.getElementById('route').textContent += JSON.stringify(route);
+
+    cardView.addEventListener('click', () => {
+      if (isCardViewExpanded) {
+            // If the card view is already expanded, collapse it
+            cardView.style.height = '10%';
+        } else {
+            // If the card view is collapsed, expand it
+            cardView.style.height = '80%';
+        }
+        isCardViewExpanded = !isCardViewExpanded;
+        // routeText.textContent = generateTextDirections();
+    });
+
+});
 

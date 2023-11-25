@@ -18,22 +18,12 @@ firebase_admin.initialize_app(cred, {
 })
 
 ref = db.reference('buildings')
-
-
-entrance_list = []
-
 buildings = ref.get()
-for b in buildings.keys():
-    entrances = buildings[b].get("entrance", {})
-    for value in entrances.values():
-        coordinates = value.split(' / ')
-        for coord in coordinates:
-            entrance_list.append(coord)
-
-print(entrance_list)
+print(buildings)
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
+
 
 @app.route('/')
 def index():
@@ -49,56 +39,47 @@ def directions():
 
 @app.route('/get_buildings', methods=['GET'])
 def get_buildings():
-    buildings = ref.get()
+    # print(buildings)
     building_names = [key for key in buildings]
-    # print(jsonify(building_names))
+
     return jsonify(building_names)
 
-# @app.route('/entrance', methods=['GET'])
-# def get_entrance_coordinates_from_db():
-#     entrance_list = []
-#
-#     buildings = ref.get()
-#     for building_name, building_data in buildings.item():
-#         entrances = building_data.get("entrance", {})
-#         coordinates = [entrances[key] for key in entrances]
-#         entrance_list[building_name] = coordinates
-#     return jsonify(entrance_list)
+@app.route('/get_accessible_entrance_coordinates', methods=['GET'])
+def get_entrance_coordinates_from_db():
+    entrance_list = []
+    for b in buildings.keys():
+        entrances = buildings[b].get("entrance", {})
+        for value in entrances.values():
+            coordinates = value.split(' / ')
+            for coord in coordinates:
+                entrance_list.append(coord)
+
+    return (jsonify(entrance_list))
+
 
 @app.route('/coordinates', methods=['GET'])
 def get_coordinates_from_db():
     origin_building = request.args.get('org')
     destination_building = request.args.get('dst')
 
-    origin_latlng = ref.child(origin_building).get()
-    destination_latlng = ref.child(destination_building).get()
+    origin_latlng = ref.child(origin_building).get()['latlng']
+    print(origin_latlng)
+    destination_latlng = ref.child(destination_building).get()['latlng']
+    print(destination_latlng)
 
-    #### data example
-    # {'latlng': '(37.5602290, 126.9457357)'}
-    # {'latlng': '(37.5602290, 126.9457357)'}
-    ####
-    olatlng = origin_latlng['latlng']
-    olatlng = olatlng[1:-1].split(", ")
+    o = origin_latlng[1:-1].split(", ")
+    d = destination_latlng[1:-1].split(", ")
 
-    dlatlng = destination_latlng['latlng']
-    dlatlng = dlatlng[1:-1].split(", ")
-
-    # print(olatlng)
-    # print(origin_latlng)
-    # print({'LATITUDE': olatlng[0], 'LONGITUDE': olatlng[1]})
-
-    ### should be
     # {'LATITUDE': 37.56247, 'LONGITUDE': 126.937626}
     # {'LATITUDE': 37.561318, 'LONGITUDE': 126.938262}
-
     data = {
         "origin": {
             "building_name": origin_building,
-            "latlng": {'LATITUDE': olatlng[0], 'LONGITUDE': olatlng[1]}
+            "latlng": {'LATITUDE': o[0], 'LONGITUDE': o[1]}
         },
         "destination": {
             "building_name": destination_building,
-            "latlng": {'LATITUDE': dlatlng[0], 'LONGITUDE': dlatlng[1]}
+            "latlng": {'LATITUDE': d[0], 'LONGITUDE': d[1]}
         }
     }
 
@@ -127,7 +108,6 @@ def get_coordinates_from_db():
 #     return jsonify(data)
 
 
-#ref = db.reference('buildings')
 
 if __name__ == '__main__':
         app.run(debug=True)

@@ -146,7 +146,6 @@ document.addEventListener("DOMContentLoaded", function() {
     if (isValidBuildingName(origin) && isValidBuildingName(destination)) {
       if (origin === destination){
         errorText.textContent = "출발지와 도착지가 동일합니다.";
-
       }
       else {
         fetch(`/coordinates?org=${origin}&dst=${destination}`)
@@ -158,10 +157,10 @@ document.addEventListener("DOMContentLoaded", function() {
               const originLatLng = data.origin.latlng;
               const destinationBuilding = data.destination.building_name;
               const destinationLatLng = data.destination.latlng;
-              console.log(originBuilding);
-              console.log(originLatLng);
-              console.log(destinationBuilding);
-              console.log(destinationLatLng);
+              // console.log(originBuilding);
+              // console.log(originLatLng);
+              // console.log(destinationBuilding);
+              // console.log(destinationLatLng);
 
               // use session storage to store values then redirect to a new page
               sessionStorage.setItem('originBuilding', originBuilding);
