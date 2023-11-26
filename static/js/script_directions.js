@@ -9,14 +9,14 @@ let drawInfoArr = [];
 
 function addAccessibleEntrance(map) {
 
-    function setAccessibleEntranceMarker() {
-        markerOrigin = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(originLat, originLng), //Marker의 중심좌표 설정.
-        label: originBuilding,
-        icon: "/static/images/icons8-assistive-technology-48.png",
-        iconSize: new Tmapv2.Size(28, 28),
-        map: map //Marker가 표시될 Map 설정.
-    });
+    function setAccessibleEntranceMarker(lat, lng, name = "") {
+        AccessibleEntranceMarker = new Tmapv2.Marker({
+            position: new Tmapv2.LatLng(lat, lng), //Marker의 중심좌표 설정.
+            label: name,
+            icon: "/static/images/icons8-assistive-technology-48.png",
+            iconSize: new Tmapv2.Size(18, 18),
+            map: map //Marker가 표시될 Map 설정.
+        });
     }
 
     // Fetch the name of buildings and store them in buildingsData
@@ -32,8 +32,12 @@ function addAccessibleEntrance(map) {
                 entrancesCoordinates = responseData;
                 // attach autocomplete function to the two inputs
                 console.log(entrancesCoordinates);
-
-                // setAccessibleEntranceMarker()
+                entrancesCoordinates.forEach((c) => {
+                    // console.log(c);
+                    let coord = c.slice(1,-1).split(', ', 2);
+                    // console.log(coord);
+                    setAccessibleEntranceMarker(coord[0], coord[1]);
+                })
             })
             .catch(error => {
                 console.error("Error fetching accessible entrance coordinates list: ", error);
@@ -74,7 +78,7 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         zoom: 17,
     });
     
-    // addAccessibleEntrance(map);
+    addAccessibleEntrance(map);
 
     // create marker on origin and destination buildings
     markerOrigin = new Tmapv2.Marker({
@@ -93,13 +97,14 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         map: map //Marker가 표시될 Map 설정.
     });
 
-    console.log("###########");
-    console.log(originBuilding);
-    console.log(originLat);
-    console.log(originLng);
-    console.log(destinationBuilding);
-    console.log(destinationLat);
-    console.log(destinationLng);
+    // console.log("###########");
+    // console.log(originBuilding);
+    // console.log(originLat);
+    // console.log(originLng);
+    // console.log(destinationBuilding);
+    // console.log(destinationLat);
+    // console.log(destinationLng);
+
     // api call to get walking directions
     callWalkingDirections(map, originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
 
@@ -110,27 +115,21 @@ function callWalkingDirections(map, originBuilding, originLat, originLng, destin
     var headers = {};
     headers["appKey"]="Uwozp3NT3vLq8QjIzTgLaKFTjJyC86y5YavUs4y9";
 
-    // console.log(originBuilding);
-    // console.log(originLat);
-    // console.log(originLng);
-    // console.log(destinationBuilding);
-    // console.log(destinationLat);
-    // console.log(destinationLng);
-
     $.ajax({
             method : "POST",
             headers : headers,
             url : "https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&format=json&callback=result",
             async : false,
             data : {
-                "startX" : originLng,
-                "startY" : originLat,
-                "endX" : destinationLng,
-                "endY" : destinationLat,
+                "startX" : parseFloat(originLng),
+                "startY" : parseFloat(originLat),
+                "endX" : parseFloat(destinationLng),
+                "endY" : parseFloat(destinationLat),
                 "reqCoordType" : "WGS84GEO",
                 "resCoordType" : "EPSG3857",
                 "startName" : originBuilding,
                 "endName" : destinationBuilding,
+                "searchOption": '30',
             },
             success : function(response) {
                 var resultData = response.features;

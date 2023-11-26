@@ -53,7 +53,6 @@ def get_entrance_coordinates_from_db():
             coordinates = value.split(' / ')
             for coord in coordinates:
                 entrance_list.append(coord)
-
     return (jsonify(entrance_list))
 
 

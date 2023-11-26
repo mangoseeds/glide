@@ -164,11 +164,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
               // use session storage to store values then redirect to a new page
               sessionStorage.setItem('originBuilding', originBuilding);
-              sessionStorage.setItem('originLat', JSON.stringify(originLatLng["LATITUDE"]));
-              sessionStorage.setItem('originLng', JSON.stringify(originLatLng["LONGITUDE"]));
+              sessionStorage.setItem('originLat', originLatLng["LATITUDE"]);
+              sessionStorage.setItem('originLng', originLatLng["LONGITUDE"]);
               sessionStorage.setItem('destinationBuilding', destinationBuilding);
-              sessionStorage.setItem('destinationLat', JSON.stringify(destinationLatLng["LATITUDE"]));
-              sessionStorage.setItem('destinationLng', JSON.stringify(destinationLatLng["LONGITUDE"]));
+              sessionStorage.setItem('destinationLat', destinationLatLng["LATITUDE"]);
+              sessionStorage.setItem('destinationLng', destinationLatLng["LONGITUDE"]);
 
               // if (data.route) {
               //   const route = data.route;
