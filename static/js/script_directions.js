@@ -4,72 +4,60 @@ const cardView = document.getElementById('card-view');
 const mapContainer = document.getElementById('map_div');
 let isCardViewExpanded = false;
 const routeText = document.getElementById('route-text');
-
-let resultdrawArr = [];
+let resultDrawArr = [];
 let drawInfoArr = [];
-document.addEventListener("DOMContentLoaded", function () {
 
-    // retrieve items from session storage
-    const originBuilding = sessionStorage.getItem('originBuilding');
-    const originLat = sessionStorage.getItem('originLat');
-    const originLng = sessionStorage.getItem('originLng');
-    const destinationBuilding = sessionStorage.getItem('destinationBuilding');
-    const destinationLat = sessionStorage.getItem('destinationLat');
-    const destinationLng = sessionStorage.getItem('destinationLng');
-    // const route = JSON.parse(sessionStorage.getItem('route'));
+function addAccessibleEntrance(map) {
 
-    // reconfigure when adding route functionality
-    initMap(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
+    function setAccessibleEntranceMarker(lat, lng, name = "") {
+        AccessibleEntranceMarker = new Tmapv2.Marker({
+            position: new Tmapv2.LatLng(lat, lng), //Marker의 중심좌표 설정.
+            label: name,
+            icon: "/static/images/icons8-assistive-technology-48.png",
+            iconSize: new Tmapv2.Size(18, 18),
+            map: map //Marker가 표시될 Map 설정.
+        });
+    }
 
-    // Update the HTML content
-    document.getElementById('origin-building').textContent += originBuilding;
-    document.getElementById('destination-building').textContent += destinationBuilding;
-    // document.getElementById('route').textContent += JSON.stringify(route);
+    // Fetch the name of buildings and store them in buildingsData
+      fetch("/get_accessible_entrance_coordinates")
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Failed to fetch data from /get_accessible_entrance_coordinates");
+                }
+            })
+            .then(responseData => {
+                entrancesCoordinates = responseData;
+                // attach autocomplete function to the two inputs
+                console.log(entrancesCoordinates);
+                entrancesCoordinates.forEach((c) => {
+                    // console.log(c);
+                    let coord = c.slice(1,-1).split(', ', 2);
+                    // console.log(coord);
+                    setAccessibleEntranceMarker(coord[0], coord[1]);
+                })
+            })
+            .catch(error => {
+                console.error("Error fetching accessible entrance coordinates list: ", error);
+            });
 
-    cardView.addEventListener('click', () => {
-      if (isCardViewExpanded) {
-            // If the card view is already expanded, collapse it
-            cardView.style.height = '10%';
-        } else {
-            // If the card view is collapsed, expand it
-            cardView.style.height = '80%';
-        }
-        isCardViewExpanded = !isCardViewExpanded;
-        // routeText.textContent = generateTextDirections();
-    });
+}
 
-});
+function drawLine(arrPoint) {
+		var polyline_;
+
+		polyline_ = new Tmapv2.Polyline({
+			path : arrPoint,
+			strokeColor : "#F27367",
+			strokeWeight : 6,
+			map : map
+		});
+		resultDrawArr.push(polyline_);
+	}
 
 function initMap(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng) {
-    // function callDirectionsService(orgLat, orgLng, destLat, destLng) {
-    //     var prtcl;
-    //     var headers = {};
-    //     headers["appKey"]="https://apis.openapi.sk.com/tmap/routes?version=1&format=json";
-    //     $.ajax({
-    //             method:"POST",
-    //             headers : headers,
-    //             url:"https://apis.openapi.sk.com/tmap/routes?version=1&format=json",
-    //             async:false,
-    //             data:{
-    //                 startX : orgLat,
-    //                 startY : orgLng,
-    //                 endX : destLat,
-    //                 endY : destLng,
-    //                 passList : orgLat + "," + orgLng + "_" + destLat + "," + destLng,
-    //                 reqCoordType : "WGS84GEO",
-    //                 resCoordType : "WGS84GEO",
-    //                 angle : "172",
-    //                 searchOption : "0",
-    //                 trafficInfo : "N"
-    //             },
-    //             success:function(response){
-    //             prtcl = response;
-    //             },
-    //             error:function(request,status,error){
-    //             console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-    //         }
-    //     });
-    // }
 
     // get user's screen size
     let SCREEN_SIZE = {
@@ -89,6 +77,8 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         scaleBar: "true",
         zoom: 17,
     });
+    
+    addAccessibleEntrance(map);
 
     // create marker on origin and destination buildings
     markerOrigin = new Tmapv2.Marker({
@@ -107,10 +97,23 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         map: map //Marker가 표시될 Map 설정.
     });
 
+    // console.log("###########");
+    // console.log(originBuilding);
+    // console.log(originLat);
+    // console.log(originLng);
+    // console.log(destinationBuilding);
+    // console.log(destinationLat);
+    // console.log(destinationLng);
+
+    // api call to get walking directions
+    callWalkingDirections(map, originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
+
+}
+
+function callWalkingDirections(map, originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng) {
     // Call API for walking directions
     var headers = {};
     headers["appKey"]="Uwozp3NT3vLq8QjIzTgLaKFTjJyC86y5YavUs4y9";
-
 
     $.ajax({
             method : "POST",
@@ -118,14 +121,15 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
             url : "https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&format=json&callback=result",
             async : false,
             data : {
-                "startX" : originLng,
-                "startY" : originLat,
-                "endX" : destinationLng,
-                "endY" : destinationLat,
+                "startX" : parseFloat(originLng),
+                "startY" : parseFloat(originLat),
+                "endX" : parseFloat(destinationLng),
+                "endY" : parseFloat(destinationLat),
                 "reqCoordType" : "WGS84GEO",
                 "resCoordType" : "EPSG3857",
                 "startName" : originBuilding,
-                "endName" : destinationBuilding
+                "endName" : destinationBuilding,
+                "searchOption": '30',
             },
             success : function(response) {
                 var resultData = response.features;
@@ -141,11 +145,11 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
                 $("#route-result").text(tDistance + tTime);
 
                 //기존 그려진 라인 & 마커가 있다면 초기화
-                if (resultdrawArr.length > 0) {
-                    for (var i in resultdrawArr) {
-                        resultdrawArr[i].setMap(null);
+                if (resultDrawArr.length > 0) {
+                    for (var i in resultDrawArr) {
+                        resultDrawArr[i].setMap(null);
                     }
-                    resultdrawArr = [];
+                    resultDrawArr = [];
                 }
 
                 drawInfoArr = [];
@@ -225,19 +229,46 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         });
 }
 
-function drawLine(arrPoint) {
-		var polyline_;
-
-		polyline_ = new Tmapv2.Polyline({
-			path : arrPoint,
-			strokeColor : "#F27367",
-			strokeWeight : 6,
-			map : map
-		});
-		resultdrawArr.push(polyline_);
-	}
-
 function generateTextDirections() {
   return "here goes generated text description of the route";
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    // retrieve items from session storage
+    const originBuilding = sessionStorage.getItem('originBuilding');
+    const originLat = sessionStorage.getItem('originLat');
+    const originLng = sessionStorage.getItem('originLng');
+    const destinationBuilding = sessionStorage.getItem('destinationBuilding');
+    const destinationLat = sessionStorage.getItem('destinationLat');
+    const destinationLng = sessionStorage.getItem('destinationLng');
+    // const route = JSON.parse(sessionStorage.getItem('route'));
+
+    // console.log(originBuilding);
+    // console.log(originLat);
+    // console.log(originLng);
+    // console.log(destinationBuilding);
+    // console.log(destinationLat);
+    // console.log(destinationLng);
+
+    // reconfigure when adding route functionality
+    initMap(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
+
+    // Update the HTML content
+    document.getElementById('origin-building').textContent += originBuilding;
+    document.getElementById('destination-building').textContent += destinationBuilding;
+    // document.getElementById('route').textContent += JSON.stringify(route);
+
+    cardView.addEventListener('click', () => {
+      if (isCardViewExpanded) {
+            // If the card view is already expanded, collapse it
+            cardView.style.height = '10%';
+        } else {
+            // If the card view is collapsed, expand it
+            cardView.style.height = '80%';
+        }
+        isCardViewExpanded = !isCardViewExpanded;
+        // routeText.textContent = generateTextDirections();
+    });
+
+});
 

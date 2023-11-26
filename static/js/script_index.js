@@ -6,6 +6,7 @@ const destinationBuildingsListWrapper = document.getElementById("destination-bui
 const destinationBuildingsList = document.getElementById("destination-buildings-list");
 const swapButton = document.getElementById("swap-button");
 const routeForm = document.getElementById('route-form');
+const errorTextContainer = document.getElementById('error-text-container');
 const errorText = document.getElementById('error-text');
 
 let buildingsData;
@@ -145,8 +146,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (isValidBuildingName(origin) && isValidBuildingName(destination)) {
       if (origin === destination){
+        errorText.style.backgroundColor = "rgba(255,253,241,0.65)";
         errorText.textContent = "출발지와 도착지가 동일합니다.";
-
       }
       else {
         fetch(`/coordinates?org=${origin}&dst=${destination}`)
@@ -158,18 +159,18 @@ document.addEventListener("DOMContentLoaded", function() {
               const originLatLng = data.origin.latlng;
               const destinationBuilding = data.destination.building_name;
               const destinationLatLng = data.destination.latlng;
-              console.log(originBuilding);
-              console.log(originLatLng);
-              console.log(destinationBuilding);
-              console.log(destinationLatLng);
+              // console.log(originBuilding);
+              // console.log(originLatLng);
+              // console.log(destinationBuilding);
+              // console.log(destinationLatLng);
 
               // use session storage to store values then redirect to a new page
               sessionStorage.setItem('originBuilding', originBuilding);
-              sessionStorage.setItem('originLat', JSON.stringify(originLatLng["LATITUDE"]));
-              sessionStorage.setItem('originLng', JSON.stringify(originLatLng["LONGITUDE"]));
+              sessionStorage.setItem('originLat', originLatLng["LATITUDE"]);
+              sessionStorage.setItem('originLng', originLatLng["LONGITUDE"]);
               sessionStorage.setItem('destinationBuilding', destinationBuilding);
-              sessionStorage.setItem('destinationLat', JSON.stringify(destinationLatLng["LATITUDE"]));
-              sessionStorage.setItem('destinationLng', JSON.stringify(destinationLatLng["LONGITUDE"]));
+              sessionStorage.setItem('destinationLat', destinationLatLng["LATITUDE"]);
+              sessionStorage.setItem('destinationLng', destinationLatLng["LONGITUDE"]);
 
               // if (data.route) {
               //   const route = data.route;
@@ -183,12 +184,18 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     }
     else if (!isValidBuildingName(origin) && !isValidBuildingName(destination)) {
+      errorText.style.backgroundColor = "rgba(242, 115, 103, 0.8)";
+      errorText.style.borderRadius = "10px";
       errorText.textContent = "출발지, 도착지 입력이 올바른지 확인해주세요.";
     }
     else if (!isValidBuildingName(origin)) {
+      errorText.style.backgroundColor = "rgba(242, 115, 103, 0.8)";
+      errorText.style.borderRadius = "10px";
       errorText.textContent = "출발지 입력이 올바른지 확인해주세요.";
     }
     else if (!isValidBuildingName(destination)) {
+      errorText.style.backgroundColor = "rgba(242, 115, 103, 0.8)";
+      errorText.style.borderRadius = "10px";
       errorText.textContent = "도착지 입력이 올바른지 확인해주세요.";
     }
     else {
