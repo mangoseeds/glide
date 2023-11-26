@@ -6,6 +6,7 @@ const destinationBuildingsListWrapper = document.getElementById("destination-bui
 const destinationBuildingsList = document.getElementById("destination-buildings-list");
 const swapButton = document.getElementById("swap-button");
 const routeForm = document.getElementById('route-form');
+const errorTextContainer = document.getElementById('error-text-container');
 const errorText = document.getElementById('error-text');
 
 let buildingsData;
@@ -145,6 +146,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (isValidBuildingName(origin) && isValidBuildingName(destination)) {
       if (origin === destination){
+        errorText.style.backgroundColor = "rgba(255,253,241,0.65)";
         errorText.textContent = "출발지와 도착지가 동일합니다.";
       }
       else {
@@ -182,12 +184,18 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     }
     else if (!isValidBuildingName(origin) && !isValidBuildingName(destination)) {
+      errorText.style.backgroundColor = "rgba(242, 115, 103, 0.8)";
+      errorText.style.borderRadius = "10px";
       errorText.textContent = "출발지, 도착지 입력이 올바른지 확인해주세요.";
     }
     else if (!isValidBuildingName(origin)) {
+      errorText.style.backgroundColor = "rgba(242, 115, 103, 0.8)";
+      errorText.style.borderRadius = "10px";
       errorText.textContent = "출발지 입력이 올바른지 확인해주세요.";
     }
     else if (!isValidBuildingName(destination)) {
+      errorText.style.backgroundColor = "rgba(242, 115, 103, 0.8)";
+      errorText.style.borderRadius = "10px";
       errorText.textContent = "도착지 입력이 올바른지 확인해주세요.";
     }
     else {
