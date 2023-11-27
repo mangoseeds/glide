@@ -8,7 +8,6 @@ let resultDrawArr = [];
 let drawInfoArr = [];
 
 function addAccessibleEntrance(map) {
-
     function setAccessibleEntranceMarker(lat, lng, name = "") {
         AccessibleEntranceMarker = new Tmapv2.Marker({
             position: new Tmapv2.LatLng(lat, lng), //Marker의 중심좌표 설정.

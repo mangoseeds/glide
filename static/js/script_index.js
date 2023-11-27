@@ -115,7 +115,7 @@ function autocomplete(input, list, wrapper) {
     const rect = input.getBoundingClientRect();
     suggestions.style.position = 'absolute';
     suggestions.style.left = rect.left + 'px';
-    suggestions.style.top = rect.bottom + 'px';
+    // suggestions.style.top = rect.bottom + 'px';
 
     //Iterate through all entries in the list and find matches
     for (let i = 0; i < list.length; i++) {
@@ -149,7 +149,7 @@ function autocomplete(input, list, wrapper) {
     const suggestions = document.getElementById(wrapper.id + "-suggestions");
     if (suggestions) {
       suggestions.style.left = rect.left + 'px';
-      suggestions.style.top = rect.bottom + 'px';
+      // suggestions.style.top = rect.bottom + 'px';
     }
   }
 
@@ -166,6 +166,8 @@ function autocomplete(input, list, wrapper) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+
+  initMap();
 
   // Fetch the name of buildings and store them in buildingsData
   fetch("/get_buildings")
@@ -238,33 +240,37 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch(`/coordinates?org=${origin}&dst=${destination}`)
           .then(response => response.json())
           .then(data => {
-            if (data.origin && data.destination) {
-              // Redirect to route.html with (origin, destination, route [])
-              const originBuilding = data.origin.building_name;
-              const originLatLng = data.origin.latlng;
-              const destinationBuilding = data.destination.building_name;
-              const destinationLatLng = data.destination.latlng;
-              // console.log(originBuilding);
-              // console.log(originLatLng);
-              // console.log(destinationBuilding);
-              // console.log(destinationLatLng);
+              if (data.origin && data.destination) {
+                  // Redirect to route.html with (origin, destination, route [])
+                  const originBuilding = data.origin.building_name;
+                  const originLatLng = data.origin.latlng;
+                  const destinationBuilding = data.destination.building_name;
+                  const destinationLatLng = data.destination.latlng;
+                  // console.log(originBuilding);
+                  // console.log(originLatLng);
+                  // console.log(destinationBuilding);
+                  // console.log(destinationLatLng);
 
-              // use session storage to store values then redirect to a new page
-              sessionStorage.setItem('originBuilding', originBuilding);
-              sessionStorage.setItem('originLat', originLatLng["LATITUDE"]);
-              sessionStorage.setItem('originLng', originLatLng["LONGITUDE"]);
-              sessionStorage.setItem('destinationBuilding', destinationBuilding);
-              sessionStorage.setItem('destinationLat', destinationLatLng["LATITUDE"]);
-              sessionStorage.setItem('destinationLng', destinationLatLng["LONGITUDE"]);
+                  // use session storage to store values then redirect to a new page
+                  sessionStorage.setItem('originBuilding', originBuilding);
+                  sessionStorage.setItem('originLat', originLatLng["LATITUDE"]);
+                  sessionStorage.setItem('originLng', originLatLng["LONGITUDE"]);
+                  sessionStorage.setItem('destinationBuilding', destinationBuilding);
+                  sessionStorage.setItem('destinationLat', destinationLatLng["LATITUDE"]);
+                  sessionStorage.setItem('destinationLng', destinationLatLng["LONGITUDE"]);
 
-              // if (data.route) {
-              //   const route = data.route;
-              //   sessionStorage.setItem('route', JSON.stringify(route));
-              // }
-
-              window.location.href = `/directions`;
-            
-            }
+                  // if (data.route) {
+                  //   const route = data.route;
+                  //   sessionStorage.setItem('route', JSON.stringify(route));
+                  // }
+                  console.log("YESSS");
+                  setTimeout(() => {
+                    window.location.href = '/directions';
+                  }, 100);
+              }
+          })
+          .catch(error => {
+              console.error('Error fetching coordinates:', error);
           });
       }
     }
@@ -286,7 +292,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
-  initMap();
 });
 
 function handleRouteError(){

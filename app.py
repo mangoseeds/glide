@@ -35,7 +35,7 @@ def directions():
     dst = request.args.get('dst')
     # route = request.args.get('route')
     # add route when reconfiguring database and route field
-    return render_template('directions.html')
+    return render_template('directions.html', org=org, dst=dst)
 
 @app.route('/get_buildings', methods=['GET'])
 def get_buildings():
