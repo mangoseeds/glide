@@ -31,7 +31,7 @@ function addAccessibleEntrance(map) {
             .then(responseData => {
                 entrancesCoordinates = responseData;
                 // attach autocomplete function to the two inputs
-                console.log(entrancesCoordinates);
+                // console.log(entrancesCoordinates);
                 entrancesCoordinates.forEach((c) => {
                     // console.log(c);
                     let coord = c.slice(1,-1).split(', ', 2);
@@ -42,7 +42,6 @@ function addAccessibleEntrance(map) {
             .catch(error => {
                 console.error("Error fetching accessible entrance coordinates list: ", error);
             });
-
 }
 
 function drawLine(arrPoint) {

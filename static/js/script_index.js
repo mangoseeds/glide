@@ -10,6 +10,91 @@ const errorTextContainer = document.getElementById('error-text-container');
 const errorText = document.getElementById('error-text');
 
 let buildingsData;
+let userLoc = [37.5628046, 126.9476495];
+let map;
+
+function initMap() {
+// get user's screen size
+    let SCREEN_SIZE = {
+        width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
+        height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+    };
+
+    location();
+
+    map = new window.Tmapv2.Map(document.getElementById("map_div"), {
+        center: new Tmapv2.LatLng(userLoc[0], userLoc[1]),
+        width: SCREEN_SIZE.width + "px",
+        height: SCREEN_SIZE.height + "px",
+        draggableSys: "true",
+        draggable: "true",
+        scrollwheel: "false",
+        zoomControl: "false",
+        measureControl: "true",
+        scaleBar: "true",
+        zoom: 17,
+    });
+
+    addAccessibleEntrance(map);
+}
+
+
+function location() {
+  window.navigator.geolocation.getCurrentPosition(currentPosition);
+}
+
+
+// Get user's current position
+function currentPosition(position) {
+    if (position) {
+        userLoc = [position.coords.latitude, position.coords.longitude];
+        userMarker = new Tmapv2.Marker({
+            position: new Tmapv2.LatLng(userLoc[0], userLoc[1]), //Marker의 중심좌표 설정.
+            label: "현재 위치",
+            icon: "/static/images/icons8-location-48.png",
+            iconSize: new Tmapv2.Size(18, 18),
+            map: map //Marker가 표시될 Map 설정.
+        });
+        map.setCenter(new Tmapv2.LatLng(userLoc[0], userLoc[1]));
+    }
+
+    // return userLoc;
+}
+
+function addAccessibleEntrance(map) {
+    function setAccessibleEntranceMarker(lat, lng, name = "") {
+        AccessibleEntranceMarker = new Tmapv2.Marker({
+            position: new Tmapv2.LatLng(lat, lng), //Marker의 중심좌표 설정.
+            label: name,
+            icon: "/static/images/icons8-assistive-technology-48.png",
+            iconSize: new Tmapv2.Size(18, 18),
+            map: map //Marker가 표시될 Map 설정.
+        });
+    }
+
+    // Fetch the name of buildings and store them in buildingsData
+      fetch("/get_accessible_entrance_coordinates")
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Failed to fetch data from /get_accessible_entrance_coordinates");
+                }
+            })
+            .then(responseData => {
+                entrancesCoordinates = responseData;
+                // attach autocomplete function to the two inputs
+                entrancesCoordinates.forEach((c) => {
+                    // console.log(c);
+                    let coord = c.slice(1,-1).split(', ', 2);
+                    // console.log(coord);
+                    setAccessibleEntranceMarker(coord[0], coord[1]);
+                })
+            })
+            .catch(error => {
+                console.error("Error fetching accessible entrance coordinates list: ", error);
+            });
+}
 
 // Autocomplete the text input field so that the user can select from a list of buildings
 function autocomplete(input, list, wrapper) {
@@ -200,6 +285,8 @@ document.addEventListener("DOMContentLoaded", function() {
       errorText.textContent = "입력이 올바른지 확인해주세요.";
     }
   });
+
+  initMap();
 });
 
 function handleRouteError(){

@@ -19,7 +19,7 @@ firebase_admin.initialize_app(cred, {
 
 ref = db.reference('buildings')
 buildings = ref.get()
-print(buildings)
+# print(buildings)
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -62,9 +62,9 @@ def get_coordinates_from_db():
     destination_building = request.args.get('dst')
 
     origin_latlng = ref.child(origin_building).get()['latlng']
-    print(origin_latlng)
+    # print(origin_latlng)
     destination_latlng = ref.child(destination_building).get()['latlng']
-    print(destination_latlng)
+    # print(destination_latlng)
 
     o = origin_latlng[1:-1].split(", ")
     d = destination_latlng[1:-1].split(", ")
