@@ -184,21 +184,19 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     }
     else if (!isValidBuildingName(origin) && !isValidBuildingName(destination)) {
-      errorText.style.backgroundColor = "rgba(242, 115, 103, 0.8)";
-      errorText.style.borderRadius = "10px";
+      errorText.style.backgroundColor = "rgba(255,253,241,0.65)";
       errorText.textContent = "출발지, 도착지 입력이 올바른지 확인해주세요.";
     }
     else if (!isValidBuildingName(origin)) {
-      errorText.style.backgroundColor = "rgba(242, 115, 103, 0.8)";
-      errorText.style.borderRadius = "10px";
+      errorText.style.backgroundColor = "rgba(255,253,241,0.65)";
       errorText.textContent = "출발지 입력이 올바른지 확인해주세요.";
     }
     else if (!isValidBuildingName(destination)) {
-      errorText.style.backgroundColor = "rgba(242, 115, 103, 0.8)";
-      errorText.style.borderRadius = "10px";
+      errorText.style.backgroundColor = "rgba(255,253,241,0.65)";
       errorText.textContent = "도착지 입력이 올바른지 확인해주세요.";
     }
     else {
+      errorText.style.backgroundColor = "rgba(255,253,241,0.65)";
       errorText.textContent = "입력이 올바른지 확인해주세요.";
     }
   });
