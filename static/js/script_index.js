@@ -225,7 +225,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Check if inputs are valid, and fetch corresponding lat,lng values for org and dst
   routeForm.addEventListener("submit", function(event) {
-    event.preventDefault();
+    // event.preventDefault();
     errorText.textContent = "";
 
     const origin = originInput.value;
@@ -240,16 +240,17 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch(`/coordinates?org=${origin}&dst=${destination}`)
           .then(response => response.json())
           .then(data => {
+              console.log(data);
               if (data.origin && data.destination) {
                   // Redirect to route.html with (origin, destination, route [])
                   const originBuilding = data.origin.building_name;
                   const originLatLng = data.origin.latlng;
                   const destinationBuilding = data.destination.building_name;
                   const destinationLatLng = data.destination.latlng;
-                  // console.log(originBuilding);
-                  // console.log(originLatLng);
-                  // console.log(destinationBuilding);
-                  // console.log(destinationLatLng);
+                  console.log(originBuilding);
+                  console.log(originLatLng);
+                  console.log(destinationBuilding);
+                  console.log(destinationLatLng);
 
                   // use session storage to store values then redirect to a new page
                   sessionStorage.setItem('originBuilding', originBuilding);
@@ -263,10 +264,11 @@ document.addEventListener("DOMContentLoaded", function() {
                   //   const route = data.route;
                   //   sessionStorage.setItem('route', JSON.stringify(route));
                   // }
-                  console.log("YESSS");
-                  setTimeout(() => {
-                    window.location.href = '/directions';
-                  }, 100);
+                  window.location.replace('/directions');
+
+                  // setTimeout(() => {
+                  //   window.location.href = '/directions';
+                  // }, 100);
               }
           })
           .catch(error => {

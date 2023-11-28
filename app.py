@@ -18,7 +18,6 @@ firebase_admin.initialize_app(cred, {
 })
 
 ref = db.reference('buildings')
-# print(buildings)
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -41,7 +40,6 @@ def get_buildings():
     buildings = ref.get()
     # print(buildings)
     building_names = [key for key in buildings]
-
     return jsonify(building_names)
 
 @app.route('/get_accessible_entrance_coordinates', methods=['GET'])
@@ -54,7 +52,7 @@ def get_entrance_coordinates_from_db():
             coordinates = value.split(' / ')
             for coord in coordinates:
                 entrance_list.append(coord)
-    return (jsonify(entrance_list))
+    return jsonify(entrance_list)
 
 
 @app.route('/coordinates', methods=['GET'])
@@ -63,27 +61,38 @@ def get_coordinates_from_db():
     destination_building = request.args.get('dst')
 
     origin_latlng = ref.child(origin_building).get()['latlng']
-    # print(origin_latlng)
     destination_latlng = ref.child(destination_building).get()['latlng']
-    # print(destination_latlng)
 
-    o = origin_latlng[1:-1].split(", ")
-    d = destination_latlng[1:-1].split(", ")
+    if origin_latlng is not None and destination_latlng is not None:
+        print(origin_latlng)
+        print(destination_latlng)
+        print(type(origin_latlng))
+        o = origin_latlng[1:-1].split(", ")
+        d = destination_latlng[1:-1].split(", ")
 
-    # {'LATITUDE': 37.56247, 'LONGITUDE': 126.937626}
-    # {'LATITUDE': 37.561318, 'LONGITUDE': 126.938262}
-    data = {
-        "origin": {
-            "building_name": origin_building,
-            "latlng": {'LATITUDE': o[0], 'LONGITUDE': o[1]}
-        },
-        "destination": {
-            "building_name": destination_building,
-            "latlng": {'LATITUDE': d[0], 'LONGITUDE': d[1]}
+        print(isinstance(origin_latlng, dict))
+
+        # {'LATITUDE': 37.56247, 'LONGITUDE': 126.937626}
+        # {'LATITUDE': 37.561318, 'LONGITUDE': 126.938262}
+        data = {
+            "origin": {
+                "building_name": origin_building,
+                "latlng": {'LATITUDE': o[0], 'LONGITUDE': o[1]}
+            },
+            "destination": {
+                "building_name": destination_building,
+                "latlng": {'LATITUDE': d[0], 'LONGITUDE': d[1]}
+            }
         }
-    }
+        print(jsonify(data))
 
-    return jsonify(data)
+        return jsonify(data)
+    else:
+        # Handle the case where data is not found in the database
+        print("ERROR")
+        return jsonify({"error": "Building data not found"})
+
+
 
 # @app.route('/get_directions', methods=['GET'])
 # def get_directions_from_db():
