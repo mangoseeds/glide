@@ -6,6 +6,7 @@ let isCardViewExpanded = false;
 const routeText = document.getElementById('route-text');
 let resultDrawArr = [];
 let drawInfoArr = [];
+const estimatedDistanceTime = document.getElementById('estimated-distance-time');
 
 function addAccessibleEntrance(map) {
     function setAccessibleEntranceMarker(lat, lng, name = "") {
@@ -136,11 +137,13 @@ function callWalkingDirections(map, originBuilding, originLat, originLng, destin
                 var tDistance = "총 거리 : "
                         + ((resultData[0].properties.totalDistance) / 1000)
                                 .toFixed(1) + "km,";
-                var tTime = " 예상 시간 : "
+                var tTime = " 예상 시간 : 최소 "
                         + ((resultData[0].properties.totalTime) / 60)
                                 .toFixed(0) + "분";
 
-                $("#route-result").text(tDistance + tTime);
+                console.log(tDistance);
+                console.log(tTime);
+                estimatedDistanceTime.textContent = tDistance + " " + tTime;
 
                 //기존 그려진 라인 & 마커가 있다면 초기화
                 if (resultDrawArr.length > 0) {

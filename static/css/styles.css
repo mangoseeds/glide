@@ -321,3 +321,12 @@ h2 .building-name{
 .direction-container {
     visibility: hidden;
 }
+
+h3 {
+    font-size: 10pt;
+    color: #F27367;
+}
+
+#estimated-distance-time {
+    margin: 0;
+}
