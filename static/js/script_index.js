@@ -10,56 +10,59 @@ const errorTextContainer = document.getElementById('error-text-container');
 const errorText = document.getElementById('error-text');
 
 let buildingsData;
-let userLoc = [37.5628046, 126.9476495];
+const defaultLoc = [37.5628046, 126.9476495];
 let map;
 
 function initMap() {
-// get user's screen size
-    let SCREEN_SIZE = {
-        width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
-        height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
-    };
-
-    location();
-
-    map = new window.Tmapv2.Map(document.getElementById("map_div"), {
-        center: new Tmapv2.LatLng(userLoc[0], userLoc[1]),
-        width: SCREEN_SIZE.width + "px",
-        height: SCREEN_SIZE.height + "px",
-        draggableSys: "true",
-        draggable: "true",
-        scrollwheel: "false",
-        zoomControl: "false",
-        measureControl: "true",
-        scaleBar: "true",
-        zoom: 17,
-    });
-
-    addAccessibleEntrance(map);
-}
-
-
-function location() {
-  window.navigator.geolocation.getCurrentPosition(currentPosition);
-}
-
-
-// Get user's current position
-function currentPosition(position) {
-    if (position) {
-        userLoc = [position.coords.latitude, position.coords.longitude];
+    // Get user's current position
+    function currentPosition(position) {
+        map = new window.Tmapv2.Map(document.getElementById("map_div"), {
+            center: new Tmapv2.LatLng(position.coords.latitude, position.coords.longitude),
+            width: SCREEN_SIZE.width + "px",
+            height: SCREEN_SIZE.height + "px",
+            draggableSys: "true",
+            draggable: "true",
+            scrollwheel: "false",
+            zoomControl: "false",
+            measureControl: "true",
+            scaleBar: "true",
+            zoom: 17,
+        });
         userMarker = new Tmapv2.Marker({
-            position: new Tmapv2.LatLng(userLoc[0], userLoc[1]), //Marker의 중심좌표 설정.
+            position: new Tmapv2.LatLng(position.coords.latitude, position.coords.longitude), //Marker의 중심좌표 설정.
             label: "현재 위치",
             icon: "/static/images/icons8-location-48.png",
             iconSize: new Tmapv2.Size(18, 18),
             map: map //Marker가 표시될 Map 설정.
         });
-        map.setCenter(new Tmapv2.LatLng(userLoc[0], userLoc[1]));
     }
 
-    // return userLoc;
+    function noPosition(err) {
+        console.log("error getting user location : ", err);
+
+        map = new window.Tmapv2.Map(document.getElementById("map_div"), {
+            center: new Tmapv2.LatLng(defaultLoc[0], defaultLoc[1]),
+            width: SCREEN_SIZE.width + "px",
+            height: SCREEN_SIZE.height + "px",
+            draggableSys: "true",
+            draggable: "true",
+            scrollwheel: "false",
+            zoomControl: "false",
+            measureControl: "true",
+            scaleBar: "true",
+            zoom: 17,
+        });
+    }
+    // get user's screen size
+    let SCREEN_SIZE = {
+        width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
+        height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+    };
+
+    window.navigator.geolocation.getCurrentPosition(currentPosition, noPosition);
+    addAccessibleEntrance(map);
 }
+
 
 function addAccessibleEntrance(map) {
     function setAccessibleEntranceMarker(lat, lng, name = "") {
