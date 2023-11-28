@@ -298,7 +298,7 @@ document.addEventListener("DOMContentLoaded", function() {
 function handleRouteError(){
   // Display error message
   errorText.textContent = "";
-  errorText.textContent = "길을 찾을 수 없습니다."
+  errorText.textContent = "길을 찾을 수 없습니다.";
 }
 
 function isValidBuildingName(buildingName) {
