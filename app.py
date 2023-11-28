@@ -18,7 +18,6 @@ firebase_admin.initialize_app(cred, {
 })
 
 ref = db.reference('buildings')
-buildings = ref.get()
 # print(buildings)
 
 app = Flask(__name__)
@@ -39,6 +38,7 @@ def directions():
 
 @app.route('/get_buildings', methods=['GET'])
 def get_buildings():
+    buildings = ref.get()
     # print(buildings)
     building_names = [key for key in buildings]
 
@@ -46,6 +46,7 @@ def get_buildings():
 
 @app.route('/get_accessible_entrance_coordinates', methods=['GET'])
 def get_entrance_coordinates_from_db():
+    buildings = ref.get()
     entrance_list = []
     for b in buildings.keys():
         entrances = buildings[b].get("entrance", {})
