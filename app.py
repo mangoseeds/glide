@@ -63,35 +63,22 @@ def get_coordinates_from_db():
     origin_latlng = ref.child(origin_building).get()['latlng']
     destination_latlng = ref.child(destination_building).get()['latlng']
 
-    if origin_latlng is not None and destination_latlng is not None:
-        print(origin_latlng)
-        print(destination_latlng)
-        print(type(origin_latlng))
-        o = origin_latlng[1:-1].split(", ")
-        d = destination_latlng[1:-1].split(", ")
+    o = origin_latlng[1:-1].split(", ")
+    d = destination_latlng[1:-1].split(", ")
 
-        print(isinstance(origin_latlng, dict))
-
-        # {'LATITUDE': 37.56247, 'LONGITUDE': 126.937626}
-        # {'LATITUDE': 37.561318, 'LONGITUDE': 126.938262}
-        data = {
-            "origin": {
-                "building_name": origin_building,
-                "latlng": {'LATITUDE': o[0], 'LONGITUDE': o[1]}
-            },
-            "destination": {
-                "building_name": destination_building,
-                "latlng": {'LATITUDE': d[0], 'LONGITUDE': d[1]}
-            }
+    # {'LATITUDE': 37.56247, 'LONGITUDE': 126.937626}
+    # {'LATITUDE': 37.561318, 'LONGITUDE': 126.938262}
+    data = {
+        "origin": {
+            "building_name": origin_building,
+            "latlng": {'LATITUDE': o[0], 'LONGITUDE': o[1]}
+        },
+        "destination": {
+            "building_name": destination_building,
+            "latlng": {'LATITUDE': d[0], 'LONGITUDE': d[1]}
         }
-        print(jsonify(data))
-
-        return jsonify(data)
-    else:
-        # Handle the case where data is not found in the database
-        print("ERROR")
-        return jsonify({"error": "Building data not found"})
-
+    }
+    return jsonify(data)
 
 
 # @app.route('/get_directions', methods=['GET'])
