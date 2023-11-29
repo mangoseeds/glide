@@ -28,6 +28,7 @@ function initMap() {
             scaleBar: "true",
             zoom: 17,
         });
+        console.log(typeof(position.coords.latitude));
         userMarker = new Tmapv2.Marker({
             position: new Tmapv2.LatLng(position.coords.latitude, position.coords.longitude), //Marker의 중심좌표 설정.
             label: "현재 위치",
@@ -35,6 +36,8 @@ function initMap() {
             iconSize: new Tmapv2.Size(18, 18),
             map: map //Marker가 표시될 Map 설정.
         });
+        addAccessibleEntrance(map);
+
     }
 
     function noPosition(err) {
@@ -52,6 +55,8 @@ function initMap() {
             scaleBar: "true",
             zoom: 17,
         });
+        addAccessibleEntrance(map);
+
     }
     // get user's screen size
     let SCREEN_SIZE = {
@@ -60,7 +65,6 @@ function initMap() {
     };
 
     window.navigator.geolocation.getCurrentPosition(currentPosition, noPosition);
-    addAccessibleEntrance(map);
 }
 
 
@@ -76,27 +80,28 @@ function addAccessibleEntrance(map) {
     }
 
     // Fetch the name of buildings and store them in buildingsData
-      fetch("/get_accessible_entrance_coordinates")
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error("Failed to fetch data from /get_accessible_entrance_coordinates");
-                }
+    fetch("/get_accessible_entrance_coordinates")
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Failed to fetch data from /get_accessible_entrance_coordinates");
+            }
+        })
+        .then(responseData => {
+            entrancesCoordinates = responseData;
+            // attach autocomplete function to the two inputs
+            entrancesCoordinates.forEach((c) => {
+                let coord = c.slice(1,-1).split(', ', 2);
+                // console.log(c, coord);
+                setAccessibleEntranceMarker(coord[0], coord[1]);
+
+                // setAccessibleEntranceMarker(parseFloat(coord[0]), parseFloat(coord[1]));
             })
-            .then(responseData => {
-                entrancesCoordinates = responseData;
-                // attach autocomplete function to the two inputs
-                entrancesCoordinates.forEach((c) => {
-                    // console.log(c);
-                    let coord = c.slice(1,-1).split(', ', 2);
-                    // console.log(coord);
-                    setAccessibleEntranceMarker(coord[0], coord[1]);
-                })
-            })
-            .catch(error => {
-                console.error("Error fetching accessible entrance coordinates list: ", error);
-            });
+        })
+        .catch(error => {
+            console.error("Error fetching accessible entrance coordinates list: ", error);
+        });
 }
 
 // Autocomplete the text input field so that the user can select from a list of buildings

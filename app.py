@@ -39,7 +39,10 @@ def directions():
 def get_buildings():
     buildings = ref.get()
     # print(buildings)
-    building_names = [key for key in buildings]
+    # all_buildings = [key for key in buildings]
+    # print(all_buildings)
+    building_names = [key for key in buildings if buildings[key].get("latlng")]
+    # print(building_names)
     return jsonify(building_names)
 
 @app.route('/get_accessible_entrance_coordinates', methods=['GET'])

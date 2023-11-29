@@ -20,28 +20,28 @@ function addAccessibleEntrance(map) {
     }
 
     // Fetch the name of buildings and store them in buildingsData
-      fetch("/get_accessible_entrance_coordinates")
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error("Failed to fetch data from /get_accessible_entrance_coordinates");
-                }
+    fetch("/get_accessible_entrance_coordinates")
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Failed to fetch data from /get_accessible_entrance_coordinates");
+            }
+        })
+        .then(responseData => {
+            entrancesCoordinates = responseData;
+            // attach autocomplete function to the two inputs
+            // console.log(entrancesCoordinates);
+            entrancesCoordinates.forEach((c) => {
+                // console.log(c);
+                let coord = c.slice(1,-1).split(', ', 2);
+                // console.log(coord);
+                setAccessibleEntranceMarker(coord[0], coord[1]);
             })
-            .then(responseData => {
-                entrancesCoordinates = responseData;
-                // attach autocomplete function to the two inputs
-                // console.log(entrancesCoordinates);
-                entrancesCoordinates.forEach((c) => {
-                    // console.log(c);
-                    let coord = c.slice(1,-1).split(', ', 2);
-                    // console.log(coord);
-                    setAccessibleEntranceMarker(coord[0], coord[1]);
-                })
-            })
-            .catch(error => {
-                console.error("Error fetching accessible entrance coordinates list: ", error);
-            });
+        })
+        .catch(error => {
+            console.error("Error fetching accessible entrance coordinates list: ", error);
+        });
 }
 
 function drawLine(arrPoint) {
@@ -95,14 +95,6 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         iconSize: new Tmapv2.Size(42, 38),
         map: map //Marker가 표시될 Map 설정.
     });
-
-    // console.log("###########");
-    // console.log(originBuilding);
-    // console.log(originLat);
-    // console.log(originLng);
-    // console.log(destinationBuilding);
-    // console.log(destinationLat);
-    // console.log(destinationLng);
 
     // api call to get walking directions
     callWalkingDirections(map, originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
@@ -243,13 +235,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const destinationLat = sessionStorage.getItem('destinationLat');
     const destinationLng = sessionStorage.getItem('destinationLng');
     // const route = JSON.parse(sessionStorage.getItem('route'));
-
-    // console.log(originBuilding);
-    // console.log(originLat);
-    // console.log(originLng);
-    // console.log(destinationBuilding);
-    // console.log(destinationLat);
-    // console.log(destinationLng);
 
     // reconfigure when adding route functionality
     initMap(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
