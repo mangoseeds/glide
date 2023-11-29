@@ -1,5 +1,3 @@
-let map;
-let defaultMapLatLng = { lat: 37.563434, lng: 126.947945 }; //overall school scope
 const cardView = document.getElementById('card-view');
 const mapContainer = document.getElementById('map_div');
 let isCardViewExpanded = false;
@@ -8,9 +6,185 @@ let resultDrawArr = [];
 let drawInfoArr = [];
 const estimatedDistanceTime = document.getElementById('estimated-distance-time');
 
-function addAccessibleEntrance(map) {
+let map;
+let userMarker;
+let defaultMapLatLng = { lat: 37.563434, lng: 126.947945 }; //overall school scope
+
+document.addEventListener("DOMContentLoaded", function () {
+    // retrieve items from session storage
+    const originBuilding = sessionStorage.getItem('originBuilding');
+    const originLat = sessionStorage.getItem('originLat');
+    const originLng = sessionStorage.getItem('originLng');
+    const destinationBuilding = sessionStorage.getItem('destinationBuilding');
+    const destinationLat = sessionStorage.getItem('destinationLat');
+    const destinationLng = sessionStorage.getItem('destinationLng');
+    // const route = JSON.parse(sessionStorage.getItem('route'));
+
+    // reconfigure when adding route functionality
+    initMap(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
+
+    // Update the HTML content
+    document.getElementById('origin-building').textContent += originBuilding;
+    document.getElementById('destination-building').textContent += destinationBuilding;
+    // document.getElementById('route').textContent += JSON.stringify(route);
+
+    cardView.addEventListener('click', () => {
+      if (isCardViewExpanded) {
+            // If the card view is already expanded, collapse it
+            cardView.style.height = '10%';
+        } else {
+            // If the card view is collapsed, expand it
+            cardView.style.height = '80%';
+        }
+        isCardViewExpanded = !isCardViewExpanded;
+        // routeText.textContent = generateTextDirections();
+    });
+
+});
+
+function initMap(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng) {
+
+    function updateLocation() {
+        window.navigator.geolocation.getCurrentPosition(
+            function(position) {
+                // Update the marker position
+                console.log("resetting user loc");
+                console.log(position.coords.latitude, position.coords.longitude);
+                userMarker.setPosition(position.coords.latitude, position.coords.longitude);
+
+                // Optionally, you can also update the map center
+                // map.setCenter(new Tmapv2.LatLng(position.coords.latitude, position.coords.longitude));
+            },
+            function(err) {
+                console.log("Error getting user location: ", err);
+            }
+        );
+    }
+
+    function currentPosition(position) {
+        map = new window.Tmapv2.Map(document.getElementById("map_div"), {
+            center: new Tmapv2.LatLng(position.coords.latitude, position.coords.longitude),
+            width: SCREEN_SIZE.width + "px",
+            height: SCREEN_SIZE.height + "px",
+            draggableSys: "true",
+            draggable: "true",
+            scrollwheel: "false",
+            zoomControl: "false",
+            measureControl: "true",
+            scaleBar: "true",
+            zoom: 17,
+        });
+
+        userMarker = new Tmapv2.Marker({
+            position: new Tmapv2.LatLng(position.coords.latitude, position.coords.longitude),
+            label: "현재 위치",
+            icon: "/static/images/icons8-location-48.png",
+            iconSize: new Tmapv2.Size(18, 18),
+            map: map
+        });
+
+        addAccessibleEntrance();
+
+        // Update the user's location every 10 seconds
+        setInterval(updateLocation, 15000);
+
+        // create marker on origin and destination buildings
+        markerOrigin = new Tmapv2.Marker({
+            position: new Tmapv2.LatLng(originLat, originLng), //Marker의 중심좌표 설정.
+            label: originBuilding,
+            icon: "/static/images/icons8-map-pin-48.png",
+            iconSize: new Tmapv2.Size(42, 38),
+            map: map //Marker가 표시될 Map 설정.
+        });
+        //Marker 객체 생성.
+        markerDestination = new Tmapv2.Marker({
+            position: new Tmapv2.LatLng(destinationLat, destinationLng), //Marker의 중심좌표 설정.
+            label: destinationBuilding,
+            icon: "/static/images/icons8-map-pin-48.png",
+            iconSize: new Tmapv2.Size(42, 38),
+            map: map //Marker가 표시될 Map 설정.
+        });
+
+        // api call to get walking directions
+        callWalkingDirections(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
+
+    }
+
+    function noPosition(err) {
+        console.log("Error getting user location: ", err);
+
+        map = new window.Tmapv2.Map(document.getElementById("map_div"), {
+            center: new Tmapv2.LatLng(originLat, originLng),
+            width: SCREEN_SIZE.width + "px",
+            height: SCREEN_SIZE.height + "px",
+            draggableSys: "true",
+            draggable: "true",
+            scrollwheel: "true",
+            zoomControl: "false",
+            measureControl: "true",
+            scaleBar: "true",
+            zoom: 17,
+        });
+
+        addAccessibleEntrance();
+
+        // create marker on origin and destination buildings
+        markerOrigin = new Tmapv2.Marker({
+            position: new Tmapv2.LatLng(originLat, originLng), //Marker의 중심좌표 설정.
+            label: originBuilding,
+            icon: "/static/images/icons8-map-pin-48.png",
+            iconSize: new Tmapv2.Size(42, 38),
+            map: map //Marker가 표시될 Map 설정.
+        });
+        //Marker 객체 생성.
+        markerDestination = new Tmapv2.Marker({
+            position: new Tmapv2.LatLng(destinationLat, destinationLng), //Marker의 중심좌표 설정.
+            label: destinationBuilding,
+            icon: "/static/images/icons8-map-pin-48.png",
+            iconSize: new Tmapv2.Size(42, 38),
+            map: map //Marker가 표시될 Map 설정.
+        });
+
+        // api call to get walking directions
+        callWalkingDirections(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
+
+    }
+
+    // get user's screen size
+    let SCREEN_SIZE = {
+        width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
+        height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+    };
+
+    window.navigator.geolocation.getCurrentPosition(currentPosition, noPosition);
+
+    // addAccessibleEntrance(map);
+
+    // // create marker on origin and destination buildings
+    // markerOrigin = new Tmapv2.Marker({
+    //     position: new Tmapv2.LatLng(originLat, originLng), //Marker의 중심좌표 설정.
+    //     label: originBuilding,
+    //     icon: "/static/images/icons8-map-pin-48.png",
+    //     iconSize: new Tmapv2.Size(42, 38),
+    //     map: map //Marker가 표시될 Map 설정.
+    // });
+    // //Marker 객체 생성.
+    // markerDestination = new Tmapv2.Marker({
+    //     position: new Tmapv2.LatLng(destinationLat, destinationLng), //Marker의 중심좌표 설정.
+    //     label: destinationBuilding,
+    //     icon: "/static/images/icons8-map-pin-48.png",
+    //     iconSize: new Tmapv2.Size(42, 38),
+    //     map: map //Marker가 표시될 Map 설정.
+    // });
+
+    // api call to get walking directions
+    // callWalkingDirections(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
+
+}
+
+function addAccessibleEntrance() {
     function setAccessibleEntranceMarker(lat, lng, name = "") {
-        AccessibleEntranceMarker = new Tmapv2.Marker({
+        accessibleEntranceMarker = new Tmapv2.Marker({
             position: new Tmapv2.LatLng(lat, lng), //Marker의 중심좌표 설정.
             label: name,
             icon: "/static/images/icons8-assistive-technology-48.png",
@@ -44,64 +218,7 @@ function addAccessibleEntrance(map) {
         });
 }
 
-function drawLine(arrPoint) {
-		var polyline_;
-
-		polyline_ = new Tmapv2.Polyline({
-			path : arrPoint,
-			strokeColor : "#F27367",
-			strokeWeight : 6,
-			map : map
-		});
-		resultDrawArr.push(polyline_);
-	}
-
-function initMap(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng) {
-
-    // get user's screen size
-    let SCREEN_SIZE = {
-        width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
-        height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
-    };
-
-    map = new window.Tmapv2.Map(document.getElementById("map_div"), {
-        center: new Tmapv2.LatLng(originLat, originLng),
-        width: SCREEN_SIZE.width + "px",
-        height: SCREEN_SIZE.height + "px",
-        draggableSys: "true",
-        draggable: "true",
-        scrollwheel: "true",
-        zoomControl: "false",
-        measureControl: "true",
-        scaleBar: "true",
-        zoom: 17,
-    });
-    
-    addAccessibleEntrance(map);
-
-    // create marker on origin and destination buildings
-    markerOrigin = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(originLat, originLng), //Marker의 중심좌표 설정.
-        label: originBuilding,
-        icon: "/static/images/icons8-map-pin-48.png",
-        iconSize: new Tmapv2.Size(42, 38),
-        map: map //Marker가 표시될 Map 설정.
-    });
-    //Marker 객체 생성.
-    markerDestination = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(destinationLat, destinationLng), //Marker의 중심좌표 설정.
-        label: destinationBuilding,
-        icon: "/static/images/icons8-map-pin-48.png",
-        iconSize: new Tmapv2.Size(42, 38),
-        map: map //Marker가 표시될 Map 설정.
-    });
-
-    // api call to get walking directions
-    callWalkingDirections(map, originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
-
-}
-
-function callWalkingDirections(map, originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng) {
+function callWalkingDirections(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng) {
     // Call API for walking directions
     var headers = {};
     headers["appKey"]="Uwozp3NT3vLq8QjIzTgLaKFTjJyC86y5YavUs4y9";
@@ -133,8 +250,6 @@ function callWalkingDirections(map, originBuilding, originLat, originLng, destin
                         + ((resultData[0].properties.totalTime) / 60)
                                 .toFixed(0) + "분";
 
-                console.log(tDistance);
-                console.log(tTime);
                 estimatedDistanceTime.textContent = tDistance + " " + tTime;
 
                 //기존 그려진 라인 & 마커가 있다면 초기화
@@ -222,39 +337,18 @@ function callWalkingDirections(map, originBuilding, originLat, originLng, destin
         });
 }
 
+function drawLine(arrPoint) {
+		var polyline_;
+
+		polyline_ = new Tmapv2.Polyline({
+			path : arrPoint,
+			strokeColor : "#F27367",
+			strokeWeight : 6,
+			map : map
+		});
+		resultDrawArr.push(polyline_);
+}
+
 function generateTextDirections() {
   return "here goes generated text description of the route";
 }
-
-document.addEventListener("DOMContentLoaded", function () {
-    // retrieve items from session storage
-    const originBuilding = sessionStorage.getItem('originBuilding');
-    const originLat = sessionStorage.getItem('originLat');
-    const originLng = sessionStorage.getItem('originLng');
-    const destinationBuilding = sessionStorage.getItem('destinationBuilding');
-    const destinationLat = sessionStorage.getItem('destinationLat');
-    const destinationLng = sessionStorage.getItem('destinationLng');
-    // const route = JSON.parse(sessionStorage.getItem('route'));
-
-    // reconfigure when adding route functionality
-    initMap(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
-
-    // Update the HTML content
-    document.getElementById('origin-building').textContent += originBuilding;
-    document.getElementById('destination-building').textContent += destinationBuilding;
-    // document.getElementById('route').textContent += JSON.stringify(route);
-
-    cardView.addEventListener('click', () => {
-      if (isCardViewExpanded) {
-            // If the card view is already expanded, collapse it
-            cardView.style.height = '10%';
-        } else {
-            // If the card view is collapsed, expand it
-            cardView.style.height = '80%';
-        }
-        isCardViewExpanded = !isCardViewExpanded;
-        // routeText.textContent = generateTextDirections();
-    });
-
-});
-
