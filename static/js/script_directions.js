@@ -251,7 +251,7 @@ function callWalkingDirections(originBuilding, originLat, originLng, destination
                 "resCoordType" : "EPSG3857",
                 "startName" : originBuilding,
                 "endName" : destinationBuilding,
-                "searchOption": '30',
+                "searchOption": 30,
             },
             success : function(response) {
                 var resultData = response.features;
