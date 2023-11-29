@@ -234,10 +234,7 @@ function addAccessibleEntrance() {
 }
 
 function addBuildingInfo() {
-    // let messages = {};
-
     function setBuildingMarker(name, lat, lng, msg) {
-        console.log(name, lat, lng, msg)
         var buildingMarker = new Tmapv2.Marker({
             map: map, //Marker가 표시될 Map 설정.
             position: new Tmapv2.LatLng(lat, lng), //Marker의 중심좌표 설정.
@@ -245,7 +242,6 @@ function addBuildingInfo() {
             icon: "/static/images/icons8-location-48.png",
             iconSize: new Tmapv2.Size(30, 30)
         });
-        console.log("added marker")
         buildingMarker.addListener('click', function(evt) {
             alert(msg);
         });
@@ -262,15 +258,10 @@ function addBuildingInfo() {
         })
         .then(responseData => {
             buildingDetails = responseData;
-
-            console.log(buildingDetails);
             for (let [b, m] of Object.entries(buildingDetails)) {
                 let coord = m[0].slice(1, -1).split(', ');
                 setBuildingMarker(b, coord[0], coord[1], m[1]);
-                console.log(b, coord[0], coord[1], m[1]);
-
             }
-
         })
         .catch(error => {
             console.error("Error fetching building information: ", error);

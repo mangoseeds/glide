@@ -84,6 +84,7 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         });
 
         addAccessibleEntrance();
+        addBuildingInfo();
 
         // Update the user's location every 10 seconds
         setInterval(updateLocation, 15000);
@@ -127,6 +128,7 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         });
 
         addAccessibleEntrance();
+        addBuildingInfo();
 
         // create marker on origin and destination buildings
         markerOrigin = new Tmapv2.Marker({
@@ -157,29 +159,6 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
     };
 
     window.navigator.geolocation.getCurrentPosition(currentPosition, noPosition);
-
-    // addAccessibleEntrance(map);
-
-    // // create marker on origin and destination buildings
-    // markerOrigin = new Tmapv2.Marker({
-    //     position: new Tmapv2.LatLng(originLat, originLng), //Marker의 중심좌표 설정.
-    //     label: originBuilding,
-    //     icon: "/static/images/icons8-map-pin-48.png",
-    //     iconSize: new Tmapv2.Size(42, 38),
-    //     map: map //Marker가 표시될 Map 설정.
-    // });
-    // //Marker 객체 생성.
-    // markerDestination = new Tmapv2.Marker({
-    //     position: new Tmapv2.LatLng(destinationLat, destinationLng), //Marker의 중심좌표 설정.
-    //     label: destinationBuilding,
-    //     icon: "/static/images/icons8-map-pin-48.png",
-    //     iconSize: new Tmapv2.Size(42, 38),
-    //     map: map //Marker가 표시될 Map 설정.
-    // });
-
-    // api call to get walking directions
-    // callWalkingDirections(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
-
 }
 
 function addAccessibleEntrance() {
@@ -203,7 +182,7 @@ function addAccessibleEntrance() {
             }
         })
         .then(responseData => {
-            entrancesCoordinates = responseData;
+            let entrancesCoordinates = responseData;
             // attach autocomplete function to the two inputs
             // console.log(entrancesCoordinates);
             entrancesCoordinates.forEach((c) => {
@@ -215,6 +194,41 @@ function addAccessibleEntrance() {
         })
         .catch(error => {
             console.error("Error fetching accessible entrance coordinates list: ", error);
+        });
+}
+
+function addBuildingInfo() {
+    function setBuildingMarker(name, lat, lng, msg) {
+        var buildingMarker = new Tmapv2.Marker({
+            map: map, //Marker가 표시될 Map 설정.
+            position: new Tmapv2.LatLng(lat, lng), //Marker의 중심좌표 설정.
+            label: name,
+            icon: "/static/images/icons8-location-48.png",
+            iconSize: new Tmapv2.Size(30, 30)
+        });
+        buildingMarker.addListener('click', function(evt) {
+            alert(msg);
+        });
+    }
+
+    // Fetch building information
+    fetch("/get_building_info")
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Failed to fetch data from /get_building_info");
+            }
+        })
+        .then(responseData => {
+            buildingDetails = responseData;
+            for (let [b, m] of Object.entries(buildingDetails)) {
+                let coord = m[0].slice(1, -1).split(', ');
+                setBuildingMarker(b, coord[0], coord[1], m[1]);
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching building information: ", error);
         });
 }
 

@@ -64,15 +64,11 @@ def get_building_info_from_db():
     for b in buildings.keys():
         info = buildings[b].get("information")
         if info:
-            # print(info)
             if buildings[b].get("latlng"):
                 latlng = buildings[b].get("latlng")
-                # print(latlng)
             else:
                 latlng = list(buildings[b].get("entrance").values())[0].split(' / ')[0]
-                # print(latlng)
             building_info[b] = [ latlng, info ]
-    print(building_info)
     return jsonify(building_info)
 
 @app.route('/coordinates', methods=['GET'])
