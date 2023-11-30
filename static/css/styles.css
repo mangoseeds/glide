@@ -290,16 +290,18 @@ ul {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 10%;
+    height: 90px;
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
     overflow: hidden;
     transition: height 0.3s ease;
     /*color: #FFFDF1;*/
-    background-color: #FFFDF1;
+    background-color: var(--blossom);
 }
 
 .text-direction-container {
+    height: 100%;
+    max-height: calc(100% - 90px);
     padding: 20px;
     display: flex;
     /*justify-content: center;*/
@@ -314,17 +316,39 @@ ul {
 
 h2 .building-name{
     font-size: 14pt;
-    color: #F27367;
+    color: var(--coral);
     width: 50%;
 }
 
-.direction-container {
-    visibility: hidden;
+#direction-description-container {
+    margin-top: 20px;
+    visibility: visible;
+    overflow: auto;
+    scroll-behavior: smooth;
+    height: 100%;
+}
+
+h2 {
+    font-size: 12pt;
+    color: var(--green);
 }
 
 h3 {
     font-size: 10pt;
-    color: #F27367;
+    color: var(--coral);
+}
+
+p.description {
+    font-size: 10pt;
+    color: var(--green);
+    padding-top: 2px;
+    padding-left: 5px;
+    font-style: normal;
+}
+
+p.title {
+    font-size: 12pt;
+    color: var(--green);
 }
 
 #estimated-distance-time {

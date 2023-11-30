@@ -1,7 +1,7 @@
 const cardView = document.getElementById('card-view');
 const mapContainer = document.getElementById('map_div');
 let isCardViewExpanded = false;
-const routeText = document.getElementById('route-text');
+let directionDescriptionContainer = document.getElementById('direction-description-container');
 let resultDrawArr = [];
 let drawInfoArr = [];
 const estimatedDistanceTime = document.getElementById('estimated-distance-time');
@@ -31,13 +31,14 @@ document.addEventListener("DOMContentLoaded", function () {
     cardView.addEventListener('click', () => {
       if (isCardViewExpanded) {
             // If the card view is already expanded, collapse it
-            cardView.style.height = '10%';
+            cardView.style.height = '90px';
+            // directionDescriptionContainer.style.visibility = 'hidden';
         } else {
             // If the card view is collapsed, expand it
             cardView.style.height = '80%';
+            // directionDescriptionContainer.style.visibility = 'visible';
         }
         isCardViewExpanded = !isCardViewExpanded;
-        // routeText.textContent = generateTextDirections();
     });
 
 });
@@ -186,9 +187,7 @@ function addAccessibleEntrance() {
             // attach autocomplete function to the two inputs
             // console.log(entrancesCoordinates);
             entrancesCoordinates.forEach((c) => {
-                // console.log(c);
                 let coord = c.slice(1,-1).split(', ', 2);
-                // console.log(coord);
                 setAccessibleEntranceMarker(coord[0], coord[1]);
             })
         })
@@ -257,8 +256,6 @@ function callWalkingDirections(originBuilding, originLat, originLng, destination
 
                 var resultData = response.features;
 
-                console.log(response);
-                console.log(resultData);
 
                 //결과 출력
                 var tDistance = "총 거리 : "
@@ -269,6 +266,21 @@ function callWalkingDirections(originBuilding, originLat, originLng, destination
                                 .toFixed(0) + "분";
 
                 estimatedDistanceTime.textContent = tDistance + " " + tTime;
+
+                resultData.forEach(features => {
+                    // console.log(features);
+                    // console.log(features.geometry.type);
+
+                    if (features.geometry.type === "Point") {
+                        const description = document.createElement('p');
+                        description.classList.add('description');
+                        description.textContent = features.properties.description;
+                        description.style.visibility = 'visible';
+                        // console.log(description);
+                        directionDescriptionContainer.appendChild(description);
+                    }
+                });
+
 
                 //기존 그려진 라인 & 마커가 있다면 초기화
                 if (resultDrawArr.length > 0) {
@@ -365,8 +377,4 @@ function drawLine(arrPoint) {
 			map : map
 		});
 		resultDrawArr.push(polyline_);
-}
-
-function generateTextDirections() {
-  return "here goes generated text description of the route";
 }
