@@ -78,8 +78,8 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         userMarker = new Tmapv2.Marker({
             position: new Tmapv2.LatLng(position.coords.latitude, position.coords.longitude),
             label: "현재 위치",
-            icon: "/static/images/icons8-location-48.png",
-            iconSize: new Tmapv2.Size(18, 18),
+            icon: "/static/images/icons8-location-40.png",
+            iconSize: new Tmapv2.Size(28, 28),
             map: map
         });
 
@@ -203,7 +203,7 @@ function addBuildingInfo() {
             map: map, //Marker가 표시될 Map 설정.
             position: new Tmapv2.LatLng(lat, lng), //Marker의 중심좌표 설정.
             label: name,
-            icon: "/static/images/icons8-location-48.png",
+            icon: "/static/images/icons8-location-green-40.png",
             iconSize: new Tmapv2.Size(30, 30)
         });
         buildingMarker.addListener('click', function(evt) {
@@ -254,7 +254,11 @@ function callWalkingDirections(originBuilding, originLat, originLng, destination
                 "searchOption": 30,
             },
             success : function(response) {
+
                 var resultData = response.features;
+
+                console.log(response);
+                console.log(resultData);
 
                 //결과 출력
                 var tDistance = "총 거리 : "
