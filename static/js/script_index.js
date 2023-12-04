@@ -243,7 +243,7 @@ function addBuildingInfo() {
             iconSize: new Tmapv2.Size(30, 30)
         });
         buildingMarker.addListener('click', function(evt) {
-            alert(msg);
+            window.alert(msg);
         });
     }
 
