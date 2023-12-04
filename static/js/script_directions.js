@@ -79,8 +79,8 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         userMarker = new Tmapv2.Marker({
             position: new Tmapv2.LatLng(position.coords.latitude, position.coords.longitude),
             label: "현재 위치",
-            icon: "/static/images/icons8-location-40.png",
-            iconSize: new Tmapv2.Size(28, 28),
+            icon: "/static/images/location.png",
+            iconSize: new Tmapv2.Size(20, 20),
             map: map
         });
 
@@ -94,16 +94,16 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         markerOrigin = new Tmapv2.Marker({
             position: new Tmapv2.LatLng(originLat, originLng), //Marker의 중심좌표 설정.
             label: originBuilding,
-            icon: "/static/images/icons8-map-pin-48.png",
-            iconSize: new Tmapv2.Size(42, 38),
+            icon: "/static/images/map-pin.png",
+            iconSize: new Tmapv2.Size(42, 42),
             map: map //Marker가 표시될 Map 설정.
         });
         //Marker 객체 생성.
         markerDestination = new Tmapv2.Marker({
             position: new Tmapv2.LatLng(destinationLat, destinationLng), //Marker의 중심좌표 설정.
             label: destinationBuilding,
-            icon: "/static/images/icons8-map-pin-48.png",
-            iconSize: new Tmapv2.Size(42, 38),
+            icon: "/static/images/map-pin.png",
+            iconSize: new Tmapv2.Size(42, 42),
             map: map //Marker가 표시될 Map 설정.
         });
 
@@ -135,7 +135,7 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         markerOrigin = new Tmapv2.Marker({
             position: new Tmapv2.LatLng(originLat, originLng), //Marker의 중심좌표 설정.
             label: originBuilding,
-            icon: "/static/images/icons8-map-pin-48.png",
+            icon: "/static/images/map-pin.png",
             iconSize: new Tmapv2.Size(42, 38),
             map: map //Marker가 표시될 Map 설정.
         });
@@ -143,7 +143,7 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         markerDestination = new Tmapv2.Marker({
             position: new Tmapv2.LatLng(destinationLat, destinationLng), //Marker의 중심좌표 설정.
             label: destinationBuilding,
-            icon: "/static/images/icons8-map-pin-48.png",
+            icon: "/static/images/map-pin.png",
             iconSize: new Tmapv2.Size(42, 38),
             map: map //Marker가 표시될 Map 설정.
         });
@@ -316,11 +316,11 @@ function callWalkingDirections(originBuilding, originLat, originLng, destination
                         var size;
 
                         if (properties.pointType === "S") { //출발지 마커
-                            markerImg = "/static/images/icons8-map-pin-48.png";
+                            markerImg = "/static/images/map-pin.png";
                             pType = "S";
                             size = new Tmapv2.Size(42, 38);
                         } else if (properties.pointType == "E") { //도착지 마커
-                            markerImg = "/static/images/icons8-map-pin-48.png";
+                            markerImg = "/static/images/map-pin.png";
                             pType = "E";
                             size = new Tmapv2.Size(42, 38);
                         } else { //각 포인트 마커

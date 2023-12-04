@@ -28,7 +28,7 @@ firebase_admin.initialize_app(cred, {
 
 ref = db.reference('buildings')
 
-application = Flask(__name__)
+application = Flask(__name__, static_url_path='/static')
 application.config['JSON_AS_ASCII'] = False
 
 
@@ -107,3 +107,4 @@ def get_coordinates_from_db():
 
 if __name__ == '__main__':
         application.run(host='0.0.0.0', port=80, debug=True)
+
