@@ -54,7 +54,39 @@ body, html {
     z-index: 1;
 }
 
-#inputs-container {
+#legend {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 70px;
+    padding: 10px;
+    background-color: var(--blossom);
+    border: 5px solid var(--green);
+    border-radius: 10px;
+    z-index: 10;
+}
+
+#icon-container {
+    width: inherit;
+    height: 30%;
+}
+
+p .legend-description{
+    font-size: 9px;
+    color: var(--green);
+}
+
+#building-icon {
+    width: 12px;
+    height: 12px;
+}
+#building-icon {
+    width: 12px;
+    height: 12px;
+}
+
+#accessible-entrance-icon {
     top: 0;
     left: 0;
     z-index: 10;
@@ -73,6 +105,10 @@ body, html {
     overflow: hidden;
     border-radius: 15px;
 }
+
+/*#inputs-container {*/
+/*    width: */
+/*}*/
 
 #textbox-container{
     display: flex;
