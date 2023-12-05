@@ -245,6 +245,9 @@ function addBuildingInfo() {
         buildingMarker.addListener('click', function(evt) {
             window.alert(msg);
         });
+        buildingMarker.addListener('touchstart', function(evt) {
+            window.alert(msg);
+        });
     }
 
     // Fetch building information
