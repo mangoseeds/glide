@@ -56,9 +56,9 @@ body, html {
 
 #legend {
     position: absolute;
-    top: 0;
-    right: 0;
-    width: 100px;
+    right: 30px;
+    bottom: 30px;
+    width: 130px;
     height: 70px;
     padding: 10px;
     background-color: var(--blossom);
@@ -67,26 +67,29 @@ body, html {
     z-index: 10;
 }
 
-#icon-container {
+#legend-item-container {
     width: inherit;
     height: 30%;
+    display: flex;
+    flex-direction: row;
+    align-content: space-between;
 }
 
-p .legend-description{
-    font-size: 9px;
+p.legend-description{
+    font-size: 11px;
     color: var(--green);
+    align-self: center;
+}
+p #map-download {
+    color: var(--coral);
 }
 
-#building-icon {
-    width: 12px;
-    height: 12px;
-}
-#building-icon {
-    width: 12px;
-    height: 12px;
+.legend-icon {
+    width: 18px;
+    height: 18px;
 }
 
-#accessible-entrance-icon {
+#inputs-container {
     top: 0;
     left: 0;
     z-index: 10;
@@ -105,10 +108,6 @@ p .legend-description{
     overflow: hidden;
     border-radius: 15px;
 }
-
-/*#inputs-container {*/
-/*    width: */
-/*}*/
 
 #textbox-container{
     display: flex;
