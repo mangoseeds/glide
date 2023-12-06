@@ -66,6 +66,18 @@ def get_entrance_coordinates_from_db():
                 entrance_list.append(coord)
     return jsonify(entrance_list)
 
+@application.route('/get_parking_coordinates', methods=['GET'])
+def get_parking_coordinates_from_db():
+    buildings = ref.get()
+    parking_list = []
+    for b in buildings.keys():
+        parking = buildings[b].get("parking", {})
+        for value in parking.values():
+            coordinates = value.split(' / ')
+            for coord in coordinates:
+                parking_list.append(coord)
+    return jsonify(parking_list)
+
 @application.route('/get_building_info', methods=['GET'])
 def get_building_info_from_db():
     buildings = ref.get()
