@@ -168,6 +168,7 @@ function initMap() {
             map: map //Marker가 표시될 Map 설정.
         });
         addAccessibleEntrance();
+        addAccessibleParking();
         addBuildingInfo();
     }
 
