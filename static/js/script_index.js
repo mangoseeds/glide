@@ -163,8 +163,8 @@ function initMap() {
         userMarker = new Tmapv2.Marker({
             position: new Tmapv2.LatLng(position.coords.latitude, position.coords.longitude), //Marker의 중심좌표 설정.
             label: "현재 위치",
-            icon: "/static/images/location.png",
-            iconSize: new Tmapv2.Size(20, 20),
+            icon: "/static/images/icons8-location-40.png",
+            iconSize: new Tmapv2.Size(28, 28),
             map: map //Marker가 표시될 Map 설정.
         });
         addAccessibleEntrance();
@@ -201,7 +201,7 @@ function initMap() {
 
 function addAccessibleEntrance() {
     function setAccessibleEntranceMarker(lat, lng, name = "") {
-        var accessibleEntranceMarker = new Tmapv2.Marker({
+        accessibleEntranceMarker = new Tmapv2.Marker({
             position: new Tmapv2.LatLng(lat, lng), //Marker의 중심좌표 설정.
             label: name,
             icon: "/static/images/icons8-assistive-technology-48.png",
