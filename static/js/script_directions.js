@@ -85,6 +85,7 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         });
 
         addAccessibleEntrance();
+        addAccessibleParking();
         addBuildingInfo();
 
         // Update the user's location every 10 seconds
@@ -129,6 +130,7 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         });
 
         addAccessibleEntrance();
+        addAccessibleParking();
         addBuildingInfo();
 
         // create marker on origin and destination buildings
@@ -193,6 +195,39 @@ function addAccessibleEntrance() {
         })
         .catch(error => {
             console.error("Error fetching accessible entrance coordinates list: ", error);
+        });
+}
+
+function addAccessibleParking() {
+    function setAccessibleParkingMarker(lat, lng, name = "") {
+        var accessibleEntranceMarker = new Tmapv2.Marker({
+            position: new Tmapv2.LatLng(lat, lng), //Marker의 중심좌표 설정.
+            label: name,
+            icon: "/static/images/icons8-parking-48.png",
+            iconSize: new Tmapv2.Size(18, 18),
+            map: map //Marker가 표시될 Map 설정.
+        });
+    }
+
+    fetch("/get_parking_coordinates")
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Failed to fetch data from /get_parking_coordinates");
+            }
+        })
+        .then(responseData => {
+            parkingCoordinates = responseData;
+            // attach autocomplete function to the two inputs
+            parkingCoordinates.forEach((c) => {
+                let coord = c.slice(1,-1).split(', ', 2);
+                // console.log(c, coord);
+                setAccessibleParkingMarker(coord[0], coord[1]);
+            })
+        })
+        .catch(error => {
+            console.error("Error fetching accessible parking coordinates list: ", error);
         });
 }
 
