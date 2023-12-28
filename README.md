@@ -37,28 +37,21 @@ This project was completed in incremental steps using a new branch for a new com
 The main branch is the code currently deployed.
 
 ### Chronologically Ordered Branches:
-#### mvp/layout 
-Basic layout structure of the website, using HTML and CSS.
+**mvp/layout:** Basic layout structure of the website, using HTML and CSS.
 
-#### mvp/routing
-Makes requests to Google Maps API, passing on origin and destination.
+**mvp/routing:** Makes requests to Google Maps API, passing on origin and destination.
 
-#### mvp/database
-Uses T Map API to get directions from origin to destination, fetches building data (e.g., coordinates) from the database.
+**mvp/database:** Uses T Map API to get directions from origin to destination, fetches building data (e.g., coordinates) from the database.
 
-#### userlocation 
-Requests access to the user's current location through the browser.
+**userlocation:** Requests access to the user's current location through the browser.
 
-#### initial_deploy: Used AWS Elastic Beanstalk to deploy the initial version
+_**initial_deploy:** Used AWS Elastic Beanstalk to deploy the initial version_
 
-#### routedescription
-Displays the directions in text utilizing result data given by T Map API.
+**routedescription:** Displays the directions in text utilizing result data given by T Map API.
 
-#### maplegend
-Added a map legend for better understandability when using the map.
+**maplegend:** Added a map legend for better understandability when using the map.
 
-#### third_deploy: Deployed the updated code
+_**third_deploy:** Deployed the updated code_
 
-#### maplegend (The final version of the Ewha Challenge Semester)
-Worked further on the this branch, adding a renewed logo and a wheelchair-friendly downloadable map.
-Installation
+**maplegend: (The final version of the Ewha Challenge Semester)** Worked further on this branch, adding a renewed logo and a wheelchair-friendly downloadable map.
+
