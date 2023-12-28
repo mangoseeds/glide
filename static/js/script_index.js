@@ -197,6 +197,7 @@ function initMap() {
             zoom: 17,
         });
         addAccessibleEntrance();
+        addAccessibleParking();
         addBuildingInfo();
     }
     // get user's screen size
