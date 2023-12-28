@@ -14,12 +14,9 @@ let buildingDetails;
 const defaultLoc = [37.5628046, 126.9476495];
 let map;
 
-document.addEventListener("DOMContentLoaded", function() {
-
-  initMap();
-
-  // Fetch the name of buildings and store them in buildingsData
-  fetch("/get_buildings")
+function fetchBuildingData() {
+    // Fetch the name of buildings and store them in buildingsData
+    fetch("/get_buildings")
         .then(response => {
             if (response.ok) {
                 return response.json();
@@ -36,10 +33,9 @@ document.addEventListener("DOMContentLoaded", function() {
         .catch(error => {
             console.error("Error fetching building list: ", error);
         });
+}
 
-  // Add a click event listener to the swap button
-  // Swap the input value between two inputs
-  swapButton.addEventListener("click", function() {
+function handleSwapButtonClick() {
     // Get the current values of origin and destination inputs
     const originValue = originInput.value;
     const destinationValue = destinationInput.value;
@@ -70,10 +66,51 @@ document.addEventListener("DOMContentLoaded", function() {
       originInput.style.transition = "color 0.6s";
       destinationInput.style.transition = "color 0.6s";
     }, 250); // delay milliseconds
-  });
+}
 
-  // Check if inputs are valid, and fetch corresponding lat,lng values for org and dst
-  routeForm.addEventListener("submit", function(event) {
+function showError(message) {
+    errorText.style.backgroundColor = "rgba(255,253,241,0.65)";
+    errorText.textContent = message;
+}
+
+function processCoordinateData(data) {
+  const originBuilding = data.origin.building_name;
+  const originLatLng = data.origin.latlng;
+  const destinationBuilding = data.destination.building_name;
+  const destinationLatLng = data.destination.latlng;
+
+  return { originBuilding, originLatLng, destinationBuilding, destinationLatLng };
+}
+
+function storeSessionData(originBuilding, originLatLng, destinationBuilding, destinationLatLng) {
+    sessionStorage.setItem('originBuilding', originBuilding);
+    sessionStorage.setItem('originLat', originLatLng["LATITUDE"]);
+    sessionStorage.setItem('originLng', originLatLng["LONGITUDE"]);
+    sessionStorage.setItem('destinationBuilding', destinationBuilding);
+    sessionStorage.setItem('destinationLat', destinationLatLng["LATITUDE"]);
+    sessionStorage.setItem('destinationLng', destinationLatLng["LONGITUDE"]);
+}
+
+function fetchCoordinatesAndRedirect(origin, destination) {
+    fetch(`/coordinates?org=${origin}&dst=${destination}`)
+          .then(response => response.json())
+          .then(data => {
+              if (data.origin && data.destination) {
+                  const { originBuilding, originLatLng, destinationBuilding, destinationLatLng } = processCoordinateData(data);
+
+                  // use session storage to store values then redirect to a new page
+                  storeSessionData(originBuilding, originLatLng, destinationBuilding, destinationLatLng);
+
+                  // redirect to new page displaying directions
+                  window.location.href = `/directions`;
+              }
+          })
+          .catch(error => {
+              console.error('Error fetching coordinates:', error);
+          });
+}
+
+function handleRouteFormSubmit(event) {
     event.preventDefault();
     errorText.textContent = "";
 
@@ -81,66 +118,38 @@ document.addEventListener("DOMContentLoaded", function() {
     const destination = destinationInput.value;
 
     if (isValidBuildingName(origin) && isValidBuildingName(destination)) {
-      if (origin === destination){
-        errorText.style.backgroundColor = "rgba(255,253,241,0.65)";
-        errorText.textContent = "출발지와 도착지가 동일합니다.";
-      }
-      else {
-        fetch(`/coordinates?org=${origin}&dst=${destination}`)
-          .then(response => response.json())
-          .then(data => {
-              if (data.origin && data.destination) {
-                  // Redirect to route.html with (origin, destination, route [])
-                  const originBuilding = data.origin.building_name;
-                  const originLatLng = data.origin.latlng;
-                  const destinationBuilding = data.destination.building_name;
-                  const destinationLatLng = data.destination.latlng;
-                  // console.log(originBuilding);
-                  // console.log(originLatLng);
-                  // console.log(destinationBuilding);
-                  // console.log(destinationLatLng);
-
-                  // use session storage to store values then redirect to a new page
-                  sessionStorage.setItem('originBuilding', originBuilding);
-                  sessionStorage.setItem('originLat', originLatLng["LATITUDE"]);
-                  sessionStorage.setItem('originLng', originLatLng["LONGITUDE"]);
-                  sessionStorage.setItem('destinationBuilding', destinationBuilding);
-                  sessionStorage.setItem('destinationLat', destinationLatLng["LATITUDE"]);
-                  sessionStorage.setItem('destinationLng', destinationLatLng["LONGITUDE"]);
-
-                  // if (data.route) {
-                  //   const route = data.route;
-                  //   sessionStorage.setItem('route', JSON.stringify(route));
-                  // }
-                  window.location.href = `/directions`;
-
-                  // setTimeout(() => {
-                  //   window.location.href = '/directions';
-                  // }, 100);
-              }
-          })
-          .catch(error => {
-              console.error('Error fetching coordinates:', error);
-          });
-      }
+        if (origin === destination){
+          showError("출발지와 도착지가 동일합니다.");
+        }
+        else {
+          fetchCoordinatesAndRedirect(origin, destination);
+        }
     }
     else if (!isValidBuildingName(origin) && !isValidBuildingName(destination)) {
-      errorText.style.backgroundColor = "rgba(255,253,241,0.65)";
-      errorText.textContent = "출발지, 도착지 입력이 올바른지 확인해주세요.";
+        showError("출발지, 도착지 입력이 올바른지 확인해주세요.");
     }
     else if (!isValidBuildingName(origin)) {
-      errorText.style.backgroundColor = "rgba(255,253,241,0.65)";
-      errorText.textContent = "출발지 입력이 올바른지 확인해주세요.";
+        showError("출발지 입력이 올바른지 확인해주세요.");
     }
     else if (!isValidBuildingName(destination)) {
-      errorText.style.backgroundColor = "rgba(255,253,241,0.65)";
-      errorText.textContent = "도착지 입력이 올바른지 확인해주세요.";
+        showError("도착지 입력이 올바른지 확인해주세요.");
     }
     else {
-      errorText.style.backgroundColor = "rgba(255,253,241,0.65)";
-      errorText.textContent = "입력이 올바른지 확인해주세요.";
+        showError("입력이 올바른지 확인해주세요.");
     }
-  });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+
+  initMap();
+  fetchBuildingData();
+
+
+  // Add event listeners
+    // Swap the input value between two inputs
+  swapButton.addEventListener("click", handleSwapButtonClick);
+    // Check if inputs are valid, and fetch corresponding lat,lng values for org and dst
+  routeForm.addEventListener("submit", handleRouteFormSubmit);
 
 });
 
@@ -235,7 +244,7 @@ function addAccessibleEntrance() {
 
 function addAccessibleParking() {
     function setAccessibleParkingMarker(lat, lng, name = "") {
-        var accessibleEntranceMarker = new Tmapv2.Marker({
+        var accessibleParkingMarker = new Tmapv2.Marker({
             position: new Tmapv2.LatLng(lat, lng), //Marker의 중심좌표 설정.
             label: name,
             icon: "/static/images/icons8-parking-48.png",
@@ -277,6 +286,9 @@ function addBuildingInfo() {
             iconSize: new Tmapv2.Size(30, 30)
         });
         buildingMarker.addListener('click', function(evt) {
+            window.alert(msg);
+        });
+        buildingMarker.addListener('touchstart', function(evt) {
             window.alert(msg);
         });
     }

@@ -359,7 +359,7 @@ function callWalkingDirections(originBuilding, originLat, originLng, destination
                             pType = "E";
                             size = new Tmapv2.Size(42, 38);
                         } else { //각 포인트 마커
-                            markerImg = "http://topopen.tmap.co.kr/imgs/point.png";
+                            markerImg = "https://topopen.tmap.co.kr/imgs/point.png";
                             pType = "P";
                             size = new Tmapv2.Size(8, 8);
                         }
