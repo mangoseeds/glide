@@ -43,125 +43,108 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
+function updateLocation(position) {
+    // console.log("Resetting user location");
+    // console.log(position.coords.latitude, position.coords.longitude);
+    userMarker.setPosition(position.coords.latitude, position.coords.longitude);
+}
+
 function initMap(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng) {
+    const SCREEN_SIZE = getScreenSize();
 
-    function updateLocation() {
-        window.navigator.geolocation.getCurrentPosition(
-            function(position) {
-                // Update the marker position
-                console.log("resetting user loc");
-                console.log(position.coords.latitude, position.coords.longitude);
-                userMarker.setPosition(position.coords.latitude, position.coords.longitude);
-
-                // Optionally, you can also update the map center
-                // map.setCenter(new Tmapv2.LatLng(position.coords.latitude, position.coords.longitude));
-            },
-            function(err) {
-                console.log("Error getting user location: ", err);
-            }
-        );
+    function createMap(centerCoords, mapOptions) {
+        return new window.Tmapv2.Map(document.getElementById("map_div"), {
+            center: new Tmapv2.LatLng(centerCoords.latitude, centerCoords.longitude),
+            ...mapOptions,
+        });
     }
 
-    function currentPosition(position) {
-        map = new window.Tmapv2.Map(document.getElementById("map_div"), {
-            center: new Tmapv2.LatLng(position.coords.latitude, position.coords.longitude),
-            width: SCREEN_SIZE.width + "px",
-            height: SCREEN_SIZE.height + "px",
-            draggableSys: "true",
-            draggable: "true",
-            scrollwheel: "false",
-            zoomControl: "false",
-            measureControl: "true",
-            scaleBar: "true",
-            zoom: 17,
-        });
-
-        userMarker = new Tmapv2.Marker({
+    function setupUserMarker(map, position) {
+        return new Tmapv2.Marker({
             position: new Tmapv2.LatLng(position.coords.latitude, position.coords.longitude),
             label: "현재 위치",
             icon: "/static/images/location.png",
             iconSize: new Tmapv2.Size(20, 20),
-            map: map
+            map: map,
         });
-
-        addAccessibleEntrance();
-        addAccessibleParking();
-        addBuildingInfo();
-
-        // Update the user's location every 10 seconds
-        setInterval(updateLocation, 15000);
-
-        // create marker on origin and destination buildings
-        markerOrigin = new Tmapv2.Marker({
-            position: new Tmapv2.LatLng(originLat, originLng), //Marker의 중심좌표 설정.
-            label: originBuilding,
-            icon: "/static/images/map-pin.png",
-            iconSize: new Tmapv2.Size(42, 42),
-            map: map //Marker가 표시될 Map 설정.
-        });
-        //Marker 객체 생성.
-        markerDestination = new Tmapv2.Marker({
-            position: new Tmapv2.LatLng(destinationLat, destinationLng), //Marker의 중심좌표 설정.
-            label: destinationBuilding,
-            icon: "/static/images/map-pin.png",
-            iconSize: new Tmapv2.Size(42, 42),
-            map: map //Marker가 표시될 Map 설정.
-        });
-
-        // api call to get walking directions
-        callWalkingDirections(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
-
     }
 
-    function noPosition(err) {
+    function createBuildingMarker(position, label, iconSize) {
+        return new Tmapv2.Marker({
+            position: new Tmapv2.LatLng(position.lat, position.lng),
+            label: label,
+            icon: "/static/images/map-pin.png",
+            iconSize: new Tmapv2.Size(iconSize.width, iconSize.height),
+            map: map,
+        });
+    }
+
+    function handlePositionError(err) {
         console.log("Error getting user location: ", err);
-
-        map = new window.Tmapv2.Map(document.getElementById("map_div"), {
-            center: new Tmapv2.LatLng(originLat, originLng),
-            width: SCREEN_SIZE.width + "px",
-            height: SCREEN_SIZE.height + "px",
-            draggableSys: "true",
-            draggable: "true",
-            scrollwheel: "true",
-            zoomControl: "false",
-            measureControl: "true",
-            scaleBar: "true",
-            zoom: 17,
-        });
-
-        addAccessibleEntrance();
-        addAccessibleParking();
-        addBuildingInfo();
-
-        // create marker on origin and destination buildings
-        markerOrigin = new Tmapv2.Marker({
-            position: new Tmapv2.LatLng(originLat, originLng), //Marker의 중심좌표 설정.
-            label: originBuilding,
-            icon: "/static/images/map-pin.png",
-            iconSize: new Tmapv2.Size(42, 38),
-            map: map //Marker가 표시될 Map 설정.
-        });
-        //Marker 객체 생성.
-        markerDestination = new Tmapv2.Marker({
-            position: new Tmapv2.LatLng(destinationLat, destinationLng), //Marker의 중심좌표 설정.
-            label: destinationBuilding,
-            icon: "/static/images/map-pin.png",
-            iconSize: new Tmapv2.Size(42, 38),
-            map: map //Marker가 표시될 Map 설정.
-        });
-
-        // api call to get walking directions
-        callWalkingDirections(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng);
-
     }
 
-    // get user's screen size
-    let SCREEN_SIZE = {
-        width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
-        height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
-    };
+    function getScreenSize() {
+        return {
+            width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
+            height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight,
+        };
+    }
 
-    window.navigator.geolocation.getCurrentPosition(currentPosition, noPosition);
+    function getCurrentPosition() {
+        return new Promise((resolve, reject) => {
+            window.navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+    }
+
+    async function init() {
+        try {
+            const position = await getCurrentPosition();
+            const mapOptions = {
+                width: SCREEN_SIZE.width + "px",
+                height: SCREEN_SIZE.height + "px",
+                draggableSys: "true",
+                draggable: "true",
+                scrollwheel: "false",
+                zoomControl: "false",
+                measureControl: "true",
+                scaleBar: "true",
+                zoom: 17,
+            };
+
+            map = createMap(position.coords, mapOptions);
+            userMarker = setupUserMarker(map, position);
+
+            addAccessibleEntrance();
+            addAccessibleParking();
+            addBuildingInfo();
+
+            setInterval(() => updateLocation(position), 15000);
+
+            markerOrigin = createBuildingMarker(
+                { lat: originLat, lng: originLng },
+                originBuilding,
+                { width: 42, height: 42 }
+            );
+            markerDestination = createBuildingMarker(
+                { lat: destinationLat, lng: destinationLng },
+                destinationBuilding,
+                { width: 42, height: 42 }
+            );
+
+            callWalkingDirections(
+                originBuilding,
+                originLat,
+                originLng,
+                destinationBuilding,
+                destinationLat,
+                destinationLng
+            );
+        } catch (error) {
+            handlePositionError(error);
+        }
+    }
+
+    init();
 }
 
 function addAccessibleEntrance() {
@@ -243,6 +226,9 @@ function addBuildingInfo() {
         buildingMarker.addListener('click', function(evt) {
             alert(msg);
         });
+        buildingMarker.addListener('touchstart', function(evt) {
+            window.alert(msg);
+        });
     }
 
     // Fetch building information
@@ -303,15 +289,13 @@ function callWalkingDirections(originBuilding, originLat, originLng, destination
                 estimatedDistanceTime.textContent = tDistance + " " + tTime;
 
                 resultData.forEach(features => {
-                    // console.log(features);
-                    // console.log(features.geometry.type);
 
                     if (features.geometry.type === "Point") {
                         const description = document.createElement('p');
                         description.classList.add('description');
                         description.textContent = features.properties.description;
                         description.style.visibility = 'visible';
-                        // console.log(description);
+
                         directionDescriptionContainer.appendChild(description);
                     }
                 });
