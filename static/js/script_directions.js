@@ -52,22 +52,22 @@ function updateLocation(position) {
 function initMap(originBuilding, originLat, originLng, destinationBuilding, destinationLat, destinationLng) {
     const SCREEN_SIZE = getScreenSize();
 
-    function createMap(centerCoords, mapOptions) {
+    function createMap(mapOptions) {
         return new window.Tmapv2.Map(document.getElementById("map_div"), {
-            center: new Tmapv2.LatLng(centerCoords.latitude, centerCoords.longitude),
+            center: new Tmapv2.LatLng(originLat, originLng),
             ...mapOptions,
         });
     }
 
-    function setupUserMarker(map, position) {
-        return new Tmapv2.Marker({
-            position: new Tmapv2.LatLng(position.coords.latitude, position.coords.longitude),
-            label: "현재 위치",
-            icon: "/static/images/location.png",
-            iconSize: new Tmapv2.Size(20, 20),
-            map: map,
-        });
-    }
+    // function setupUserMarker(map, position) {
+    //     return new Tmapv2.Marker({
+    //         position: new Tmapv2.LatLng(position.coords.latitude, position.coords.longitude),
+    //         label: "현재 위치",
+    //         icon: "/static/images/location.png",
+    //         iconSize: new Tmapv2.Size(20, 20),
+    //         map: map,
+    //     });
+    // }
 
     function createBuildingMarker(position, label, iconSize) {
         return new Tmapv2.Marker({
@@ -79,9 +79,9 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         });
     }
 
-    function handlePositionError(err) {
-        console.log("Error getting user location: ", err);
-    }
+    // function handlePositionError(err) {
+    //     console.log("Error getting user location: ", err);
+    // }
 
     function getScreenSize() {
         return {
@@ -90,15 +90,15 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
         };
     }
 
-    function getCurrentPosition() {
-        return new Promise((resolve, reject) => {
-            window.navigator.geolocation.getCurrentPosition(resolve, reject);
-        });
-    }
+    // function getCurrentPosition() {
+    //     return new Promise((resolve, reject) => {
+    //         window.navigator.geolocation.getCurrentPosition(resolve, reject);
+    //     });
+    // }
 
     async function init() {
         try {
-            const position = await getCurrentPosition();
+            // const position = await getCurrentPosition();
             const mapOptions = {
                 width: SCREEN_SIZE.width + "px",
                 height: SCREEN_SIZE.height + "px",
@@ -111,14 +111,14 @@ function initMap(originBuilding, originLat, originLng, destinationBuilding, dest
                 zoom: 17,
             };
 
-            map = createMap(position.coords, mapOptions);
-            userMarker = setupUserMarker(map, position);
+            map = createMap(mapOptions);
+            // userMarker = setupUserMarker(map, position);
 
             addAccessibleEntrance();
             addAccessibleParking();
             addBuildingInfo();
 
-            setInterval(() => updateLocation(position), 15000);
+            // setInterval(() => updateLocation(position), 15000);
 
             markerOrigin = createBuildingMarker(
                 { lat: originLat, lng: originLng },
